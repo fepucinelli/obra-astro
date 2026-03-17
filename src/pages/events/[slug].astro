@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const events = await getCollection("events", ({ data }) => !data.draft);
+  return events.map((event) => ({
+    params: { slug: event.slug },
+    props: { event },
+  }));
+}
+
+const { event } = Astro.props;
+const { Content } = await event.render();
+const isPast = event.data.date < new Date();
+
+const date = event.data.date;
+const day = String(date.getDate()).padStart(2, "0");
+const month = String(date.getMonth() + 1).padStart(2, "0");
+const year = date.getFullYear();
+const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
+---
+
+<BaseLayout
+  title={event.data.name}
+  description={event.data.description}
+  ogImage={event.data.image}
+  ogType="event"
+>
+  <!-- Back nav -->
+  <div class="px-6 md:px-12 pt-8 pb-4">
+    <a
+      href="/events"
+      class="font-mono text-xs tracking-widest text-obra-muted hover:text-obra-accent transition-colors uppercase inline-flex items-center gap-2"
+    >
+      ← AGENDA
+    </a>
+  </div>
+
+  <!-- Event hero -->
+  <section class="px-6 md:px-12 py-10 border-b border-obra-muted/30">
+    <div class="max-w-5xl">
+      <!-- Status badge -->
+      <div class="mb-6">
+        {isPast ? (
+          <span class="font-mono text-xs tracking-widest px-3 py-1.5 border border-obra-muted/50 text-obra-muted uppercase">
+            PASSADO
+          </span>
+        ) : (
+          <span class="font-mono text-xs tracking-widest px-3 py-1.5 border border-obra-accent text-obra-accent uppercase bg-obra-accent/5">
+            PRÓXIMO
+          </span>
+        )}
+      </div>
+
+      <!-- Giant date -->
+      <div
+        class="font-mono font-bold leading-none text-obra-accent mb-4 select-none"
+        style="font-size: clamp(4rem, 14vw, 12rem); letter-spacing: -0.04em;"
+        aria-label={`${day} de ${month} de ${year}`}
+      >
+        {day}.{month}
+      </div>
+
+      <!-- Year and weekday -->
+      <p class="font-mono text-obra-muted text-sm tracking-widest uppercase mb-8">
+        {weekday} — {year}
+      </p>
+
+      <!-- Event name -->
+      <h1
+        class="font-display font-bold text-obra-white leading-tight mb-6"
+        style="font-size: clamp(2rem, 6vw, 5rem);"
+      >
+        {event.data.name}
+      </h1>
+
+      <!-- Meta row -->
+      <div class="flex flex-wrap gap-6 items-center mb-10">
+        {event.data.location && (
+          <div class="flex items-center gap-2">
+            <span class="text-obra-accent font-mono text-sm">→</span>
+            <span class="font-mono text-sm tracking-wide text-obra-white">
+              {event.data.location}
+            </span>
+          </div>
+        )}
+        {event.data.description && (
+          <p class="font-body text-obra-muted text-base w-full max-w-2xl leading-relaxed mt-2">
+            {event.data.description}
+          </p>
+        )}
+      </div>
+
+      <!-- CTA -->
+      {event.data.ticketUrl && !isPast && (
+        <a
+          href={event.data.ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 font-mono text-sm tracking-widest uppercase px-6 py-3 bg-obra-accent text-obra-black font-bold hover:bg-obra-white transition-colors"
+        >
+          INGRESSOS →
+        </a>
+      )}
+      {event.data.ticketUrl && isPast && (
+        <a
+          href={event.data.ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 font-mono text-xs tracking-widest uppercase px-4 py-2.5 border border-obra-muted/50 text-obra-muted hover:border-obra-muted hover:text-obra-white transition-colors"
+        >
+          VER EVENTO →
+        </a>
+      )}
+    </div>
+  </section>
+
+  <!-- Event image -->
+  {event.data.image && (
+    <section class="px-6 md:px-12 py-10">
+      <div class="max-w-5xl">
+        <div class="relative overflow-hidden" style="aspect-ratio: 16/7;">
+          <img
+            src={event.data.image}
+            alt={event.data.name}
+            class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+          />
+          {isPast && (
+            <div class="absolute inset-0 bg-obra-black/40 mix-blend-multiply pointer-events-none"></div>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Content -->
+  <section class="px-6 md:px-12 py-12">
+    <div class="max-w-2xl">
+      <div class="prose prose-invert">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom nav -->
+  <div class="px-6 md:px-12 py-10 border-t border-obra-muted/30">
+    <a
+      href="/events"
+      class="font-mono text-xs tracking-widest text-obra-muted hover:text-obra-accent transition-colors uppercase inline-flex items-center gap-2"
+    >
+      ← VER TODOS OS EVENTOS
+    </a>
+  </div>
+</BaseLayout>

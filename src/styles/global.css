@@ -1,0 +1,291 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --color-bg: #080808;
+  --color-text: #F0EDE6;
+  --color-accent: #C8FF00;
+  --color-card: #1A1A1A;
+  --color-muted: #444444;
+
+  --font-mono: "Space Mono", "DM Mono", "Courier New", monospace;
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-body: "Barlow Condensed", system-ui, sans-serif;
+
+  --transition-base: 0.2s ease;
+  --transition-reveal: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Base ──────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Global link styles */
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  a:hover {
+    color: var(--color-accent);
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Selection highlight */
+  ::selection {
+    background-color: var(--color-accent);
+    color: #000000;
+  }
+
+  ::-moz-selection {
+    background-color: var(--color-accent);
+    color: #000000;
+  }
+
+  /* Headings default to mono */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Remove default button styles */
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+  }
+}
+
+/* ─── Custom Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-accent) 80%, white);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-bg);
+}
+
+/* ─── Grain Overlay ──────────────────────────────────────────── */
+@layer components {
+  .grain-overlay {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+    animation: grain 8s steps(10) infinite;
+  }
+}
+
+/* ─── Reveal Animation ───────────────────────────────────────── */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity var(--transition-reveal),
+      transform var(--transition-reveal);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Marquee ────────────────────────────────────────────────── */
+@layer components {
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 30s linear infinite;
+    will-change: transform;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  .marquee-wrapper {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+
+/* ─── Utility Classes ────────────────────────────────────────── */
+@layer utilities {
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-muted {
+    color: var(--color-muted);
+  }
+
+  .bg-card {
+    background-color: var(--color-card);
+  }
+
+  /* Brutalist border accent */
+  .border-accent-left {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+  }
+
+  /* Acid green underline on hover */
+  .link-underline {
+    position: relative;
+  }
+
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-accent);
+    transition: width var(--transition-base);
+  }
+
+  .link-underline:hover::after {
+    width: 100%;
+  }
+}
+
+/* ─── Prose overrides (for MDX content) ─────────────────────── */
+@layer components {
+  .prose {
+    color: var(--color-text);
+    max-width: 68ch;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    font-family: var(--font-mono);
+    color: var(--color-text);
+  }
+
+  .prose a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .prose a:hover {
+    color: var(--color-text);
+  }
+
+  .prose strong {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  .prose blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1.25rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--color-accent);
+    background-color: var(--color-card);
+    padding: 0.15em 0.4em;
+    border-radius: 2px;
+  }
+
+  .prose pre {
+    background-color: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-muted) 40%, transparent);
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+
+  .prose pre code {
+    background: none;
+    padding: 0;
+    color: var(--color-text);
+  }
+
+  .prose hr {
+    border-color: color-mix(in srgb, var(--color-muted) 40%, transparent);
+  }
+}

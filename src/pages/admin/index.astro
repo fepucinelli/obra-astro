@@ -1,0 +1,341 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { getCollection } from "astro:content";
+import { getSession } from "../../lib/auth";
+
+const session = await getSession(Astro.cookies);
+const blogPosts = await getCollection("blog");
+const events = await getCollection("events");
+const podcasts = await getCollection("podcasts");
+
+// Combine all content for recent items table
+type ContentItem = {
+  type: "blog" | "event" | "podcast";
+  title: string;
+  date: Date;
+  draft: boolean;
+  slug: string;
+};
+
+const allContent: ContentItem[] = [
+  ...blogPosts.map((p) => ({
+    type: "blog" as const,
+    title: p.data.title,
+    date: p.data.date,
+    draft: p.data.draft,
+    slug: p.slug,
+  })),
+  ...events.map((e) => ({
+    type: "event" as const,
+    title: e.data.name,
+    date: e.data.date,
+    draft: e.data.draft,
+    slug: e.slug,
+  })),
+  ...podcasts.map((p) => ({
+    type: "podcast" as const,
+    title: p.data.title,
+    date: p.data.date,
+    draft: p.data.draft,
+    slug: p.slug,
+  })),
+];
+
+const recentContent = allContent
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, 5);
+
+const editHref = (item: ContentItem) => {
+  if (item.type === "blog") return `/admin/blog/edit/${item.slug}`;
+  if (item.type === "event") return `/admin/events/edit/${item.slug}`;
+  return `/admin/podcasts/edit/${item.slug}`;
+};
+
+const typeLabel: Record<ContentItem["type"], string> = {
+  blog: "Blog",
+  event: "Evento",
+  podcast: "Podcast",
+};
+
+const typeColor: Record<ContentItem["type"], string> = {
+  blog: "#C8FF00",
+  event: "#FF6B35",
+  podcast: "#888888",
+};
+---
+
+<AdminLayout title="Dashboard" section="dashboard">
+  <!-- Welcome -->
+  <div style="margin-bottom: 2.5rem;">
+    <p
+      class="font-mono"
+      style="font-size: 0.65rem; letter-spacing: 0.2em; color: #444444; text-transform: uppercase; margin-bottom: 0.5rem;"
+    >
+      BEM-VINDO DE VOLTA
+    </p>
+    <h2
+      class="font-display"
+      style="font-size: 2rem; font-weight: 700; color: #F0EDE6; letter-spacing: -0.01em;"
+    >
+      {session.user?.name ?? session.user?.login ?? "Admin"}
+      {session.user?.login && session.user.login !== session.user.name && (
+        <span
+          class="font-mono"
+          style="font-size: 0.9rem; font-weight: 400; color: #444444; margin-left: 0.75rem;"
+        >
+          @{session.user.login}
+        </span>
+      )}
+    </h2>
+  </div>
+
+  <!-- Stats grid -->
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background-color: color-mix(in srgb, #444444 25%, transparent);
+      margin-bottom: 2.5rem;
+    "
+  >
+    {
+      [
+        { label: "Postagens", count: blogPosts.length, drafts: blogPosts.filter((p) => p.data.draft).length },
+        { label: "Eventos", count: events.length, drafts: events.filter((e) => e.data.draft).length },
+        { label: "Podcasts", count: podcasts.length, drafts: podcasts.filter((p) => p.data.draft).length },
+      ].map((stat) => (
+        <div
+          style="
+            background-color: #1A1A1A;
+            padding: 2rem 2rem 1.75rem;
+          "
+        >
+          <p
+            class="font-mono"
+            style="font-size: 0.6rem; letter-spacing: 0.2em; color: #444444; text-transform: uppercase; margin-bottom: 1rem;"
+          >
+            {stat.label}
+          </p>
+          <p
+            class="font-mono"
+            style="font-size: 3.5rem; font-weight: 700; color: #C8FF00; line-height: 1; margin-bottom: 0.5rem;"
+          >
+            {stat.count}
+          </p>
+          <p
+            class="font-mono"
+            style="font-size: 0.65rem; letter-spacing: 0.15em; color: #444444; text-transform: uppercase;"
+          >
+            {stat.drafts > 0 ? `${stat.drafts} rascunho${stat.drafts > 1 ? "s" : ""}` : "tudo publicado"}
+          </p>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Quick actions -->
+  <div style="margin-bottom: 2.5rem;">
+    <p
+      class="font-mono"
+      style="font-size: 0.6rem; letter-spacing: 0.2em; color: #444444; text-transform: uppercase; margin-bottom: 1rem;"
+    >
+      AÇÕES RÁPIDAS
+    </p>
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background-color: color-mix(in srgb, #444444 25%, transparent);
+      "
+    >
+      {
+        [
+          { label: "Nova Postagem", sub: "Criar post no blog", href: "/admin/blog/new", icon: "✦" },
+          { label: "Novo Evento", sub: "Adicionar evento", href: "/admin/events/new", icon: "◈" },
+          { label: "Novo Podcast", sub: "Publicar episódio", href: "/admin/podcasts/new", icon: "◎" },
+        ].map((action) => (
+          <a
+            href={action.href}
+            class="quick-action-card"
+            style="
+              background-color: #1A1A1A;
+              padding: 1.75rem 2rem;
+              display: flex;
+              align-items: center;
+              gap: 1.25rem;
+              transition: background-color 0.15s ease;
+              text-decoration: none;
+            "
+          >
+            <span
+              class="font-mono"
+              style="font-size: 1.4rem; color: #C8FF00; flex-shrink: 0;"
+            >
+              {action.icon}
+            </span>
+            <div>
+              <p
+                class="font-mono"
+                style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; color: #F0EDE6; text-transform: uppercase; margin-bottom: 0.2rem;"
+              >
+                {action.label}
+              </p>
+              <p
+                class="font-body"
+                style="font-size: 0.85rem; color: #444444;"
+              >
+                {action.sub}
+              </p>
+            </div>
+            <span
+              class="font-mono"
+              style="margin-left: auto; color: #444444; font-size: 0.9rem;"
+            >
+              →
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Recent content table -->
+  <div>
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      "
+    >
+      <p
+        class="font-mono"
+        style="font-size: 0.6rem; letter-spacing: 0.2em; color: #444444; text-transform: uppercase;"
+      >
+        CONTEÚDO RECENTE
+      </p>
+    </div>
+
+    <div
+      style="
+        border: 1px solid color-mix(in srgb, #444444 30%, transparent);
+        overflow: hidden;
+      "
+    >
+      <!-- Table header -->
+      <div
+        style="
+          display: grid;
+          grid-template-columns: 1fr 6rem 7rem 5rem 4rem;
+          gap: 0;
+          background-color: color-mix(in srgb, #444444 10%, transparent);
+          padding: 0.75rem 1.25rem;
+          border-bottom: 1px solid color-mix(in srgb, #444444 30%, transparent);
+        "
+      >
+        {
+          ["Título", "Tipo", "Data", "Status", ""].map((col) => (
+            <span
+              class="font-mono"
+              style="font-size: 0.6rem; letter-spacing: 0.15em; color: #444444; text-transform: uppercase;"
+            >
+              {col}
+            </span>
+          ))
+        }
+      </div>
+
+      <!-- Rows -->
+      {
+        recentContent.map((item, i) => (
+          <div
+            class="table-row"
+            style={`
+              display: grid;
+              grid-template-columns: 1fr 6rem 7rem 5rem 4rem;
+              gap: 0;
+              padding: 1rem 1.25rem;
+              align-items: center;
+              ${i < recentContent.length - 1 ? "border-bottom: 1px solid color-mix(in srgb, #444444 20%, transparent);" : ""}
+              transition: background-color 0.15s ease;
+            `}
+          >
+            <span
+              class="font-body"
+              style="font-size: 0.95rem; color: #F0EDE6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 1rem;"
+              title={item.title}
+            >
+              {item.title}
+            </span>
+            <span>
+              <span
+                class="font-mono"
+                style={`
+                  font-size: 0.6rem;
+                  letter-spacing: 0.15em;
+                  text-transform: uppercase;
+                  color: #080808;
+                  background-color: ${typeColor[item.type]};
+                  padding: 0.2rem 0.45rem;
+                `}
+              >
+                {typeLabel[item.type]}
+              </span>
+            </span>
+            <span
+              class="font-mono"
+              style="font-size: 0.7rem; letter-spacing: 0.05em; color: #444444;"
+            >
+              {item.date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "2-digit" })}
+            </span>
+            <span>
+              <span
+                class="font-mono"
+                style={`
+                  font-size: 0.6rem;
+                  letter-spacing: 0.15em;
+                  text-transform: uppercase;
+                  color: ${item.draft ? "#FF6B35" : "#C8FF00"};
+                `}
+              >
+                {item.draft ? "Rascunho" : "Público"}
+              </span>
+            </span>
+            <span>
+              <a
+                href={editHref(item)}
+                class="font-mono"
+                style="font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: #444444; transition: color 0.15s ease;"
+                onmouseover="this.style.color='#C8FF00'"
+                onmouseout="this.style.color='#444444'"
+              >
+                Editar →
+              </a>
+            </span>
+          </div>
+        ))
+      }
+
+      {recentContent.length === 0 && (
+        <div style="padding: 2rem 1.25rem; text-align: center;">
+          <p class="font-mono" style="font-size: 0.75rem; color: #444444; letter-spacing: 0.1em;">
+            Nenhum conteúdo ainda.
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .quick-action-card:hover {
+    background-color: color-mix(in srgb, #1A1A1A 70%, #C8FF00 5%) !important;
+  }
+
+  .table-row:hover {
+    background-color: color-mix(in srgb, #444444 8%, transparent) !important;
+  }
+</style>

@@ -1,0 +1,407 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Sobre"
+  description="Obra é um coletivo de música eletrônica brasileiro. Conheça nossa história, quem somos e o que nos move."
+>
+  <!-- Hero: Manifesto Header -->
+  <section
+    style="
+      border-bottom: 1px solid color-mix(in srgb, #444444 30%, transparent);
+      padding: 5rem 3rem 0;
+      overflow: hidden;
+    "
+  >
+    <div style="max-width: 1400px; margin: 0 auto;">
+      <!-- Section label -->
+      <p
+        class="font-mono reveal"
+        style="
+          font-size: 0.7rem;
+          letter-spacing: 0.25em;
+          color: #444444;
+          text-transform: uppercase;
+          margin-bottom: 3rem;
+        "
+      >
+        — SOBRE
+      </p>
+
+      <!-- Giant heading -->
+      <h1
+        class="font-display reveal"
+        style="
+          font-size: clamp(4.5rem, 16vw, 13rem);
+          font-weight: 800;
+          line-height: 0.88;
+          letter-spacing: -0.03em;
+          color: #F0EDE6;
+          margin: 0 0 0 0;
+          text-transform: uppercase;
+        "
+      >
+        <span style="color: #C8FF00;">OBRA</span> É UM<br />COLETIVO
+      </h1>
+    </div>
+  </section>
+
+  <!-- Two-column manifesto -->
+  <section
+    class="reveal"
+    style="
+      padding: 6rem 3rem;
+      border-bottom: 1px solid color-mix(in srgb, #444444 30%, transparent);
+    "
+  >
+    <div
+      style="
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6rem;
+        align-items: start;
+      "
+    >
+      <!-- Left: manifesto text -->
+      <div>
+        <div
+          style="
+            height: 3px;
+            background-color: #C8FF00;
+            width: 48px;
+            margin-bottom: 2.5rem;
+          "
+        ></div>
+        <p
+          class="font-body"
+          style="
+            font-size: 1.35rem;
+            font-weight: 500;
+            line-height: 1.5;
+            color: #F0EDE6;
+            margin-bottom: 2rem;
+          "
+        >
+          Obra nasceu do atrito entre a rua e o estúdio, entre o underground e a cultura de massa, entre o que se ouve e o que se sente no peito.
+        </p>
+        <p
+          class="font-body"
+          style="
+            font-size: 1.15rem;
+            line-height: 1.65;
+            color: color-mix(in srgb, #F0EDE6 70%, transparent);
+            margin-bottom: 1.75rem;
+          "
+        >
+          Somos um coletivo de produtores, DJs, artistas visuais e ativistas culturais baseados em São Paulo. Não somos uma gravadora. Não somos uma agência. Somos um processo — em constante reescrita, sempre inacabado.
+        </p>
+        <p
+          class="font-body"
+          style="
+            font-size: 1.15rem;
+            line-height: 1.65;
+            color: color-mix(in srgb, #F0EDE6 70%, transparent);
+            margin-bottom: 1.75rem;
+          "
+        >
+          Nossa música existe nos cruzamentos: techno com baile funk, ambient com ruído industrial, percussão afrodiaspórica com síntese modular. Não há pureza aqui. Há contaminação intencional.
+        </p>
+        <p
+          class="font-body"
+          style="
+            font-size: 1.15rem;
+            line-height: 1.65;
+            color: color-mix(in srgb, #F0EDE6 70%, transparent);
+          "
+        >
+          Cada evento é uma afirmação. Cada set é um argumento. Cada release é uma tomada de posição. A obra nunca termina — ela apenas muda de forma.
+        </p>
+      </div>
+
+      <!-- Right: values as large typographic list -->
+      <div style="padding-top: 0.5rem;">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          {
+            [
+              { num: "01", label: "AUTONOMIA", sub: "Estrutura horizontal, decisões coletivas." },
+              { num: "02", label: "TERRITÓRIO", sub: "Rua, clube, galeria — todos os espaços são válidos." },
+              { num: "03", label: "PROCESSO", sub: "O inacabado como método, não como falha." },
+              { num: "04", label: "CONTAMINAÇÃO", sub: "Gêneros, culturas e disciplinas misturados." },
+              { num: "05", label: "AFETO", sub: "Política feita de presença e cuidado." },
+            ].map((val) => (
+              <li
+                style="
+                  border-bottom: 1px solid color-mix(in srgb, #444444 30%, transparent);
+                  padding: 1.75rem 0;
+                  display: grid;
+                  grid-template-columns: 3rem 1fr;
+                  gap: 1.5rem;
+                  align-items: center;
+                "
+              >
+                <span
+                  class="font-mono"
+                  style="font-size: 0.65rem; letter-spacing: 0.2em; color: #C8FF00;"
+                >
+                  {val.num}
+                </span>
+                <div>
+                  <p
+                    class="font-mono"
+                    style="font-size: 1rem; font-weight: 700; letter-spacing: 0.08em; color: #F0EDE6; margin: 0 0 0.25rem 0; text-transform: uppercase;"
+                  >
+                    {val.label}
+                  </p>
+                  <p
+                    class="font-body"
+                    style="font-size: 0.95rem; color: #444444; margin: 0;"
+                  >
+                    {val.sub}
+                  </p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUEM SOMOS -->
+  <section
+    style="
+      padding: 6rem 3rem;
+      border-bottom: 1px solid color-mix(in srgb, #444444 30%, transparent);
+    "
+  >
+    <div style="max-width: 1400px; margin: 0 auto;">
+      <!-- Section label -->
+      <p
+        class="font-mono reveal"
+        style="
+          font-size: 0.7rem;
+          letter-spacing: 0.25em;
+          color: #444444;
+          text-transform: uppercase;
+          margin-bottom: 3rem;
+        "
+      >
+        — QUEM SOMOS
+      </p>
+
+      <h2
+        class="font-display reveal"
+        style="
+          font-size: clamp(3rem, 8vw, 7rem);
+          font-weight: 800;
+          line-height: 0.9;
+          letter-spacing: -0.02em;
+          color: #F0EDE6;
+          text-transform: uppercase;
+          margin-bottom: 5rem;
+        "
+      >
+        O COLETIVO
+      </h2>
+
+      <div
+        class="reveal"
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 1px;
+          background-color: color-mix(in srgb, #444444 20%, transparent);
+        "
+      >
+        {
+          [
+            { role: "Produção Musical", name: "Lena Vidal", desc: "Síntese modular, techno experimental e design de som." },
+            { role: "Performance / DJ", name: "Márcio Bruto", desc: "Sets de longa duração, foco em flow e narrativa sonora." },
+            { role: "Arte Visual", name: "Carla Noite", desc: "VJing, instalações e identidade visual do coletivo." },
+            { role: "Curadoria", name: "Pedro Cinza", desc: "Seleção de residentes, programação e parcerias externas." },
+            { role: "Produção de Eventos", name: "Tati Ferro", desc: "Logística, rider técnico e relação com espaços." },
+            { role: "Comunicação", name: "Davi Hum", desc: "Narrativa, texto, redes e archive do coletivo." },
+          ].map((member) => (
+            <div
+              style="
+                background-color: #080808;
+                padding: 2.5rem;
+                transition: background-color 0.2s ease;
+              "
+              class="member-card"
+            >
+              <p
+                class="font-mono"
+                style="font-size: 0.65rem; letter-spacing: 0.2em; color: #C8FF00; text-transform: uppercase; margin-bottom: 1rem;"
+              >
+                {member.role}
+              </p>
+              <h3
+                class="font-display"
+                style="font-size: 1.6rem; font-weight: 700; color: #F0EDE6; margin-bottom: 0.75rem; letter-spacing: -0.01em;"
+              >
+                {member.name}
+              </h3>
+              <p
+                class="font-body"
+                style="font-size: 1rem; color: #444444; line-height: 1.5;"
+              >
+                {member.desc}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- NOSSA HISTÓRIA -->
+  <section
+    style="
+      padding: 6rem 3rem 8rem;
+    "
+  >
+    <div style="max-width: 1400px; margin: 0 auto;">
+      <!-- Section label -->
+      <p
+        class="font-mono reveal"
+        style="
+          font-size: 0.7rem;
+          letter-spacing: 0.25em;
+          color: #444444;
+          text-transform: uppercase;
+          margin-bottom: 3rem;
+        "
+      >
+        — NOSSA HISTÓRIA
+      </p>
+
+      <div
+        style="
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 6rem;
+          align-items: start;
+        "
+      >
+        <!-- Big heading left -->
+        <div class="reveal">
+          <h2
+            class="font-display"
+            style="
+              font-size: clamp(3rem, 7vw, 6.5rem);
+              font-weight: 800;
+              line-height: 0.9;
+              letter-spacing: -0.02em;
+              color: #F0EDE6;
+              text-transform: uppercase;
+              position: sticky;
+              top: 8rem;
+            "
+          >
+            DESDE<br /><span style="color: #C8FF00;">2019</span>
+          </h2>
+        </div>
+
+        <!-- Timeline right -->
+        <div class="reveal">
+          {
+            [
+              {
+                year: "2019",
+                title: "O Início",
+                text: "Obra começou como um encontro informal num estúdio alugado no bairro do Pari. Cinco pessoas, um equipamento precário e a certeza de que havia algo a ser feito. O primeiro evento aconteceu num galpão sem nome — 200 pessoas, zero press release.",
+              },
+              {
+                year: "2020",
+                title: "O Silêncio Forçado",
+                text: "A pandemia fechou os espaços físicos. Obra sobreviveu na internet — livestreams semanais, um podcast mensal e a primeira compilação digital, distribuída gratuitamente. O arquivo cresceu sem um palco.",
+              },
+              {
+                year: "2021",
+                title: "A Rua como Palco",
+                text: "Com a reabertura gradual, Obra levou o soundsystem para a rua. Ocupações em largos, viadutos e praças de São Paulo. A ideia de espaço público como território eletrônico virou política.",
+              },
+              {
+                year: "2022",
+                title: "Expansão e Residências",
+                text: "Parcerias com coletivos do Rio, Recife e Belo Horizonte. Primeira residência artística fora do Brasil — Lisboa, com o coletivo Principe. Programas de mentoria para produtores iniciantes de periferias.",
+              },
+              {
+                year: "2023",
+                title: "Infraestrutura Própria",
+                text: "Obra estabelece seu próprio estúdio de gravação no Belém, São Paulo. Lançamento da série de releases físicos em vinil. Primeira participação em festival internacional.",
+              },
+              {
+                year: "2024 —",
+                title: "Em Construção",
+                text: "O coletivo está em sua fase mais produtiva. Novos residentes. Novos espaços. Novas linguagens. A obra continua sendo feita.",
+              },
+            ].map((item, i) => (
+              <div
+                style={`
+                  display: grid;
+                  grid-template-columns: 5rem 1fr;
+                  gap: 2rem;
+                  padding-bottom: 3rem;
+                  margin-bottom: 3rem;
+                  ${i < 5 ? "border-bottom: 1px solid color-mix(in srgb, #444444 25%, transparent);" : ""}
+                `}
+              >
+                <div>
+                  <span
+                    class="font-mono"
+                    style="font-size: 0.65rem; letter-spacing: 0.15em; color: #C8FF00; display: block; padding-top: 0.2rem;"
+                  >
+                    {item.year}
+                  </span>
+                </div>
+                <div>
+                  <h3
+                    class="font-mono"
+                    style="font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; color: #F0EDE6; text-transform: uppercase; margin-bottom: 0.75rem;"
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    class="font-body"
+                    style="font-size: 1.05rem; line-height: 1.65; color: color-mix(in srgb, #F0EDE6 60%, transparent);"
+                  >
+                    {item.text}
+                  </p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .member-card:hover {
+    background-color: #1A1A1A !important;
+  }
+
+  @media (max-width: 768px) {
+    section {
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+    }
+
+    /* Stack two-column grids */
+    section > div > div[style*="grid-template-columns: 1fr 1fr"],
+    section > div > div[style*="grid-template-columns: 1fr 2fr"] {
+      display: block !important;
+    }
+
+    section > div > div[style*="grid-template-columns: 1fr 1fr"] > div:first-child,
+    section > div > div[style*="grid-template-columns: 1fr 2fr"] > div:first-child {
+      margin-bottom: 3rem;
+    }
+  }
+</style>

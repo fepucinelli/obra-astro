@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import DateFilter from "../../components/DateFilter.vue";
+
+const allEvents = await getCollection("events", ({ data }) => !data.draft);
+const now = new Date();
+
+const upcoming = allEvents
+  .filter((e) => e.data.date > now)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+
+const past = allEvents
+  .filter((e) => e.data.date <= now)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const events = [...upcoming, ...past].map((e) => ({
+  slug: e.slug,
+  name: e.data.name,
+  date: e.data.date.toISOString(),
+  image: e.data.image,
+  location: e.data.location,
+  description: e.data.description,
+}));
+---
+
+<BaseLayout
+  title="Eventos"
+  description="Todos os eventos do coletivo Obra — festas, ocupações e soundsystems."
+>
+  <!-- Page hero -->
+  <section class="px-6 md:px-12 pt-16 pb-12 border-b border-obra-muted/30 overflow-hidden relative">
+    <!-- Background label -->
+    <div
+      class="absolute right-0 top-1/2 -translate-y-1/2 font-mono font-bold text-obra-card select-none pointer-events-none leading-none"
+      style="font-size: clamp(6rem, 18vw, 16rem); letter-spacing: -0.04em;"
+      aria-hidden="true"
+    >
+      EVENTOS
+    </div>
+
+    <div class="relative z-10 max-w-5xl">
+      <p class="font-mono text-xs tracking-widest text-obra-muted uppercase mb-6">
+        OBRA / AGENDA
+      </p>
+      <h1
+        class="font-mono font-bold text-obra-white leading-none mb-6"
+        style="font-size: clamp(3.5rem, 10vw, 8rem); letter-spacing: -0.03em;"
+      >
+        EVENTOS
+      </h1>
+      <p class="font-body text-obra-muted text-lg max-w-lg leading-relaxed">
+        Festas fechadas, ocupações na rua e soundsystems. Toda a agenda do coletivo Obra.
+      </p>
+
+      <!-- Stats -->
+      <div class="flex gap-8 mt-10">
+        <div>
+          <p class="font-mono text-obra-accent text-2xl font-bold">{upcoming.length}</p>
+          <p class="font-mono text-xs text-obra-muted tracking-widest uppercase mt-1">Próximos</p>
+        </div>
+        <div class="w-px bg-obra-muted/30"></div>
+        <div>
+          <p class="font-mono text-obra-white text-2xl font-bold">{past.length}</p>
+          <p class="font-mono text-xs text-obra-muted tracking-widest uppercase mt-1">Realizados</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events with filter -->
+  <section class="px-6 md:px-12 py-16 max-w-5xl">
+    <DateFilter events={events} client:visible />
+  </section>
+</BaseLayout>

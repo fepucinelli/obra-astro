@@ -1,0 +1,161 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import EmbedPlayer from "../../components/EmbedPlayer.vue";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const podcasts = await getCollection("podcasts", ({ data }) => !data.draft);
+  return podcasts.map((podcast) => ({
+    params: { slug: podcast.slug },
+    props: { podcast },
+  }));
+}
+
+const { podcast } = Astro.props;
+const { Content } = await podcast.render();
+
+const allPodcasts = await getCollection("podcasts", ({ data }) => !data.draft);
+const sorted = allPodcasts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const episodeIndex = sorted.findIndex((p) => p.slug === podcast.slug);
+const episodeNumber = String(sorted.length - episodeIndex).padStart(2, "0");
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+}
+
+const prevEpisode = episodeIndex < sorted.length - 1 ? sorted[episodeIndex + 1] : null;
+const nextEpisode = episodeIndex > 0 ? sorted[episodeIndex - 1] : null;
+---
+
+<BaseLayout
+  title={podcast.data.title}
+  description={podcast.data.description}
+  ogType="article"
+>
+  <!-- Back nav -->
+  <div class="px-6 md:px-12 pt-8 pb-4">
+    <a
+      href="/podcasts"
+      class="font-mono text-xs tracking-widest text-obra-muted hover:text-obra-accent transition-colors uppercase inline-flex items-center gap-2"
+    >
+      ← PODCASTS
+    </a>
+  </div>
+
+  <!-- Episode hero -->
+  <section class="px-6 md:px-12 py-10 border-b border-obra-muted/30">
+    <div class="max-w-5xl">
+      <!-- Episode badge -->
+      <div class="flex items-center gap-4 mb-6">
+        <span class="font-mono text-obra-accent text-xs tracking-widest uppercase px-3 py-1.5 border border-obra-accent/50 bg-obra-accent/5">
+          EP. {episodeNumber}
+        </span>
+        {podcast.data.duration && (
+          <span class="font-mono text-obra-muted text-xs tracking-widest">
+            {podcast.data.duration}
+          </span>
+        )}
+      </div>
+
+      <!-- Title -->
+      <h1
+        class="font-display font-bold text-obra-white leading-tight mb-6"
+        style="font-size: clamp(2rem, 6vw, 5rem);"
+      >
+        {podcast.data.title}
+      </h1>
+
+      <!-- Date -->
+      <p class="font-mono text-xs text-obra-muted tracking-widest uppercase mb-8">
+        {formatDate(podcast.data.date)}
+      </p>
+
+      <!-- Description -->
+      {podcast.data.description && (
+        <p class="font-body text-obra-muted text-lg leading-relaxed max-w-2xl mb-8">
+          {podcast.data.description}
+        </p>
+      )}
+
+      <!-- Tags -->
+      {podcast.data.tags.length > 0 && (
+        <div class="flex flex-wrap gap-2">
+          {podcast.data.tags.map((tag) => (
+            <span class="font-mono text-xs tracking-widest uppercase px-2.5 py-1.5 border border-obra-muted/40 text-obra-muted hover:border-obra-accent hover:text-obra-accent transition-colors cursor-default">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Embed player -->
+  <section class="px-6 md:px-12 py-12 border-b border-obra-muted/30">
+    <div class="max-w-4xl">
+      <div class="border border-obra-muted/30 overflow-hidden">
+        <EmbedPlayer
+          url={podcast.data.embedUrl}
+          title={podcast.data.title}
+          client:visible
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Content (tracklist, notes, etc.) -->
+  <section class="px-6 md:px-12 py-12">
+    <div class="max-w-2xl">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <!-- Episode navigation -->
+  <nav class="px-6 md:px-12 py-12 border-t border-obra-muted/30">
+    <div class="max-w-5xl grid grid-cols-2 gap-6">
+      <!-- Previous episode (older) -->
+      <div>
+        {prevEpisode ? (
+          <a
+            href={`/podcasts/${prevEpisode.slug}`}
+            class="group block"
+          >
+            <p class="font-mono text-xs text-obra-muted tracking-widest uppercase mb-2">← ANTERIOR</p>
+            <p class="font-display font-bold text-obra-white group-hover:text-obra-accent transition-colors leading-snug text-sm md:text-base">
+              {prevEpisode.data.title}
+            </p>
+          </a>
+        ) : <div></div>}
+      </div>
+
+      <!-- Next episode (newer) -->
+      <div class="text-right">
+        {nextEpisode ? (
+          <a
+            href={`/podcasts/${nextEpisode.slug}`}
+            class="group block"
+          >
+            <p class="font-mono text-xs text-obra-muted tracking-widest uppercase mb-2">PRÓXIMO →</p>
+            <p class="font-display font-bold text-obra-white group-hover:text-obra-accent transition-colors leading-snug text-sm md:text-base">
+              {nextEpisode.data.title}
+            </p>
+          </a>
+        ) : <div></div>}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Back link -->
+  <div class="px-6 md:px-12 pb-12">
+    <a
+      href="/podcasts"
+      class="font-mono text-xs tracking-widest text-obra-muted hover:text-obra-accent transition-colors uppercase inline-flex items-center gap-2"
+    >
+      ← TODOS OS EPISÓDIOS
+    </a>
+  </div>
+</BaseLayout>

@@ -1,0 +1,98 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import CategoryFilter from "../../components/CategoryFilter.vue";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = allPosts
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((post) => ({
+    slug: post.slug,
+    title: post.data.title,
+    date: post.data.date.toISOString(),
+    category: post.data.category,
+    cover: post.data.cover,
+    description: post.data.description,
+    tags: post.data.tags,
+  }));
+---
+
+<BaseLayout
+  title="Blog"
+  description="Arquivo de postagens da Obra — eventos, processos e cultura eletrônica."
+>
+  <!-- Page header -->
+  <section
+    class="px-6 md:px-12 pt-16 pb-0"
+    style="border-bottom: 1px solid color-mix(in srgb, #444444 30%, transparent);"
+  >
+    <div class="reveal" style="max-width: 1200px; margin: 0 auto;">
+      <!-- Section label -->
+      <p
+        class="font-mono"
+        style="
+          font-size: 0.7rem;
+          letter-spacing: 0.25em;
+          color: #444444;
+          text-transform: uppercase;
+          margin-bottom: 1.5rem;
+        "
+      >
+        — ARQUIVO
+      </p>
+
+      <!-- Page title -->
+      <h1
+        class="font-display"
+        style="
+          font-size: clamp(5rem, 18vw, 14rem);
+          font-weight: 800;
+          line-height: 0.9;
+          letter-spacing: -0.03em;
+          color: #F0EDE6;
+          margin: 0 0 2rem 0;
+        "
+      >
+        BLOG
+      </h1>
+
+      <!-- Horizontal rule -->
+      <div
+        style="
+          height: 1px;
+          background: linear-gradient(to right, #C8FF00 80px, color-mix(in srgb, #444444 40%, transparent));
+          margin-bottom: 0;
+        "
+      ></div>
+
+      <!-- Post count strip -->
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+          padding: 1rem 0;
+        "
+      >
+        <span
+          class="font-mono"
+          style="font-size: 0.65rem; letter-spacing: 0.2em; color: #444444; text-transform: uppercase;"
+        >
+          {posts.length} {posts.length === 1 ? "POSTAGEM" : "POSTAGENS"}
+        </span>
+        <span style="height: 1px; flex: 1; background-color: color-mix(in srgb, #444444 20%, transparent);"></span>
+        <span
+          class="font-mono"
+          style="font-size: 0.65rem; letter-spacing: 0.2em; color: #C8FF00; text-transform: uppercase;"
+        >
+          OBRA — COLETIVO
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category filter + posts (Vue island) -->
+  <section class="px-6 md:px-12 py-16" style="max-width: 1200px; margin: 0 auto;">
+    <CategoryFilter client:visible posts={posts} initialCategory="todos" />
+  </section>
+</BaseLayout>

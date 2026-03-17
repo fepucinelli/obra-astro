@@ -1,0 +1,55 @@
+---
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import AdminForm from "../../../../components/AdminForm.vue";
+import { getEntry } from "astro:content";
+
+const { slug } = Astro.params;
+const podcast = await getEntry("podcasts", slug!);
+
+if (!podcast) {
+  return Astro.redirect("/admin/podcasts");
+}
+
+const initialData = {
+  title: podcast.data.title,
+  description: podcast.data.description || "",
+  date: podcast.data.date.toISOString().split("T")[0],
+  embedUrl: podcast.data.embedUrl,
+  duration: podcast.data.duration || "",
+  tags: podcast.data.tags.join(", "),
+  draft: podcast.data.draft,
+  body: "",
+};
+---
+
+<AdminLayout title={`Editar: ${podcast.data.title}`} section="podcasts">
+  <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+    <a
+      href="/admin/podcasts"
+      class="font-mono"
+      style="font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #444444; text-decoration: none;"
+      onmouseover="this.style.color='#C8FF00'"
+      onmouseout="this.style.color='#444444'"
+    >
+      ← Podcasts
+    </a>
+    <a
+      href={`/podcasts/${podcast.slug}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-mono"
+      style="font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #444444; text-decoration: none;"
+      onmouseover="this.style.color='#C8FF00'"
+      onmouseout="this.style.color='#444444'"
+    >
+      Ver episódio ↗
+    </a>
+  </div>
+
+  <AdminForm
+    client:load
+    contentType="podcasts"
+    slug={podcast.slug}
+    initialData={initialData}
+  />
+</AdminLayout>

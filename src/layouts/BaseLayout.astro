@@ -1,0 +1,133 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: string;
+}
+
+const {
+  title,
+  description = "Obra — Coletivo de música eletrônica brasileiro",
+  ogImage = "/og-default.jpg",
+  ogType = "website",
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://obra.xyz");
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <title>{title} — OBRA</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={`${title} — OBRA`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalURL} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} — OBRA`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style is:global>
+      @import "../styles/global.css";
+    </style>
+  </head>
+  <body class="bg-obra-black text-obra-white min-h-screen font-body">
+    <!-- Grain overlay -->
+    <div class="grain-overlay" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 border-b border-obra-muted/30">
+      <nav class="flex items-center justify-between px-6 md:px-12 py-4 bg-obra-black/90 backdrop-blur-sm">
+        <a href="/" class="font-mono text-xl font-bold tracking-widest text-obra-white hover:text-obra-accent transition-colors">
+          OBRA
+        </a>
+        <ul class="hidden md:flex items-center gap-8 font-mono text-sm tracking-widest uppercase">
+          <li><a href="/blog" class="hover:text-obra-accent transition-colors">Blog</a></li>
+          <li><a href="/events" class="hover:text-obra-accent transition-colors">Eventos</a></li>
+          <li><a href="/podcasts" class="hover:text-obra-accent transition-colors">Podcasts</a></li>
+          <li><a href="/about" class="hover:text-obra-accent transition-colors">Sobre</a></li>
+          <li><a href="/press" class="hover:text-obra-accent transition-colors">Press Kit</a></li>
+        </ul>
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden font-mono text-sm tracking-widest" aria-label="Toggle menu">
+          MENU
+        </button>
+      </nav>
+      <!-- Mobile nav -->
+      <div id="mobile-nav" class="hidden md:hidden bg-obra-black border-t border-obra-muted/30 px-6 py-4">
+        <ul class="flex flex-col gap-4 font-mono text-sm tracking-widest uppercase">
+          <li><a href="/blog" class="hover:text-obra-accent transition-colors">Blog</a></li>
+          <li><a href="/events" class="hover:text-obra-accent transition-colors">Eventos</a></li>
+          <li><a href="/podcasts" class="hover:text-obra-accent transition-colors">Podcasts</a></li>
+          <li><a href="/about" class="hover:text-obra-accent transition-colors">Sobre</a></li>
+          <li><a href="/press" class="hover:text-obra-accent transition-colors">Press Kit</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <main class="pt-16">
+      <slot />
+    </main>
+
+    <footer class="border-t border-obra-muted/30 mt-24 px-6 md:px-12 py-12">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+        <div>
+          <p class="font-mono text-2xl font-bold tracking-widest text-obra-white mb-2">OBRA</p>
+          <p class="font-body text-obra-muted text-sm">Coletivo de música eletrônica — Brasil</p>
+        </div>
+        <div class="flex gap-8 font-mono text-xs tracking-widest uppercase text-obra-muted">
+          <a href="/blog" class="hover:text-obra-accent transition-colors">Blog</a>
+          <a href="/events" class="hover:text-obra-accent transition-colors">Eventos</a>
+          <a href="/podcasts" class="hover:text-obra-accent transition-colors">Podcasts</a>
+          <a href="/about" class="hover:text-obra-accent transition-colors">Sobre</a>
+          <a href="/press" class="hover:text-obra-accent transition-colors">Press</a>
+        </div>
+      </div>
+      <div class="mt-8 pt-8 border-t border-obra-muted/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <p class="font-mono text-xs text-obra-muted tracking-wider">© 2024 OBRA. Todos os direitos reservados.</p>
+        <a href="/admin" class="font-mono text-xs text-obra-muted/40 hover:text-obra-muted transition-colors tracking-widest">ADMIN</a>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      const btn = document.getElementById('mobile-menu-btn');
+      const nav = document.getElementById('mobile-nav');
+      btn?.addEventListener('click', () => {
+        nav?.classList.toggle('hidden');
+        if (btn) {
+          btn.textContent = nav?.classList.contains('hidden') ? 'MENU' : 'FECHAR';
+        }
+      });
+
+      // Scroll reveal
+      const revealElements = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      revealElements.forEach(el => observer.observe(el));
+    </script>
+  </body>
+</html>

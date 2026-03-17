@@ -1,0 +1,30 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import AdminForm from "../../../components/AdminForm.vue";
+---
+
+<AdminLayout title="Nova Postagem" section="blog-new">
+  <div style="margin-bottom: 1.5rem;">
+    <a
+      href="/admin/blog"
+      class="font-mono"
+      style="
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #444444;
+        text-decoration: none;
+        transition: color 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      "
+      onmouseover="this.style.color='#C8FF00'"
+      onmouseout="this.style.color='#444444'"
+    >
+      ← Blog
+    </a>
+  </div>
+
+  <AdminForm client:load contentType="blog" />
+</AdminLayout>
