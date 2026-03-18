@@ -1,3 +1,4 @@
+import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 import type { AstroCookies } from "astro";
 
 export interface SessionData {
@@ -9,14 +10,50 @@ export interface SessionData {
   };
 }
 
+function getSecretKey(): Buffer {
+  const secret = import.meta.env.SESSION_SECRET as string | undefined;
+  if (!secret || secret.length !== 64) {
+    throw new Error(
+      "SESSION_SECRET must be a 64-character hex string (32 bytes). Generate with: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
+    );
+  }
+  return Buffer.from(secret, "hex");
+}
+
+function encrypt(plaintext: string): string {
+  const key = getSecretKey();
+  const iv = randomBytes(12); // 96-bit IV for AES-GCM
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const encrypted = Buffer.concat([
+    cipher.update(plaintext, "utf8"),
+    cipher.final(),
+  ]);
+  const authTag = cipher.getAuthTag(); // 16 bytes
+  // Layout: iv (12) + authTag (16) + ciphertext → hex
+  return Buffer.concat([iv, authTag, encrypted]).toString("hex");
+}
+
+function decrypt(ciphertext: string): string {
+  const key = getSecretKey();
+  const buf = Buffer.from(ciphertext, "hex");
+  if (buf.length < 29) throw new Error("Ciphertext too short");
+  const iv = buf.subarray(0, 12);
+  const authTag = buf.subarray(12, 28);
+  const encrypted = buf.subarray(28);
+  const decipher = createDecipheriv("aes-256-gcm", key, iv);
+  decipher.setAuthTag(authTag);
+  return decipher.update(encrypted).toString("utf8") + decipher.final("utf8");
+}
+
 export async function getSession(cookies: AstroCookies): Promise<SessionData> {
   const sessionCookie = cookies.get("obra-session");
   if (!sessionCookie?.value) return {};
   try {
-    return JSON.parse(
-      Buffer.from(sessionCookie.value, "base64").toString("utf-8")
-    ) as SessionData;
+    // Try AES-256-GCM decryption first
+    const plaintext = decrypt(sessionCookie.value);
+    return JSON.parse(plaintext) as SessionData;
   } catch {
+    // Fall back gracefully for old Base64 cookies or decryption failures
     return {};
   }
 }
@@ -25,8 +62,8 @@ export async function setSession(
   cookies: AstroCookies,
   data: SessionData
 ): Promise<void> {
-  const encoded = Buffer.from(JSON.stringify(data), "utf-8").toString("base64");
-  cookies.set("obra-session", encoded, {
+  const encrypted = encrypt(JSON.stringify(data));
+  cookies.set("obra-session", encrypted, {
     httpOnly: true,
     secure: import.meta.env.PROD,
     sameSite: "lax",

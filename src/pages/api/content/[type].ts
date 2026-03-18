@@ -9,6 +9,23 @@ import {
   parseFrontmatter,
 } from "../../../lib/github";
 
+const VALID_TYPES = new Set(["blog", "events", "podcasts"]);
+const SLUG_RE = /^[a-z0-9-]{1,100}$/;
+
+function invalidType(type: string | undefined): Response {
+  return new Response(JSON.stringify({ error: "Invalid content type" }), {
+    status: 400,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+function invalidSlug(): Response {
+  return new Response(JSON.stringify({ error: "Invalid slug" }), {
+    status: 400,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 // GET - fetch single file or list all files for a content type
 export const GET: APIRoute = async ({ params, url, cookies }) => {
   const session = await getSession(cookies);
@@ -20,7 +37,10 @@ export const GET: APIRoute = async ({ params, url, cookies }) => {
   }
 
   const { type } = params;
+  if (!type || !VALID_TYPES.has(type)) return invalidType(type);
+
   const slug = url.searchParams.get("slug");
+  if (slug !== null && !SLUG_RE.test(slug)) return invalidSlug();
 
   try {
     if (slug) {
@@ -56,6 +76,7 @@ export const POST: APIRoute = async ({ params, request, cookies }) => {
   }
 
   const { type } = params;
+  if (!type || !VALID_TYPES.has(type)) return invalidType(type);
 
   try {
     const body = (await request.json()) as Record<string, unknown>;
@@ -111,12 +132,13 @@ export const PUT: APIRoute = async ({ params, request, cookies }) => {
   }
 
   const { type } = params;
+  if (!type || !VALID_TYPES.has(type)) return invalidType(type);
 
   try {
     const body = (await request.json()) as Record<string, unknown>;
     const { slug, body: markdownBody, ...frontmatterData } = body;
 
-    if (!slug) {
+    if (!slug || typeof slug !== "string" || !SLUG_RE.test(slug)) {
       return new Response(JSON.stringify({ error: "slug is required for updates" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -160,11 +182,12 @@ export const DELETE: APIRoute = async ({ params, request, cookies }) => {
   }
 
   const { type } = params;
+  if (!type || !VALID_TYPES.has(type)) return invalidType(type);
 
   try {
     const { slug } = (await request.json()) as { slug: string };
 
-    if (!slug) {
+    if (!slug || !SLUG_RE.test(slug)) {
       return new Response(JSON.stringify({ error: "slug is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
