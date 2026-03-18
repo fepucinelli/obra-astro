@@ -3,6 +3,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import DateFilter from "../../components/DateFilter.vue";
 
+export const prerender = true;
+
 const allEvents = await getCollection("events", ({ data }) => !data.draft);
 const now = new Date();
 

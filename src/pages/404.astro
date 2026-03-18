@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title="Página não encontrada"
+  description="A página que você procura não existe."
+>
+  <section
+    style="
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem);
+      position: relative;
+      overflow: hidden;
+    "
+  >
+    <!-- Decorative accent line -->
+    <div
+      aria-hidden="true"
+      style="
+        position: absolute;
+        top: 0;
+        left: clamp(1.5rem, 6vw, 6rem);
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(to bottom, #C8FF00, transparent);
+        opacity: 0.2;
+      "
+    ></div>
+
+    <!-- 404 wordmark -->
+    <p
+      style="
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: clamp(7rem, 25vw, 22rem);
+        line-height: 0.85;
+        letter-spacing: -0.04em;
+        color: #C8FF00;
+        margin: 0 0 2rem 0;
+        user-select: none;
+      "
+      aria-hidden="true"
+    >
+      404
+    </p>
+
+    <!-- Label -->
+    <span
+      style="
+        display: block;
+        font-family: var(--font-mono);
+        font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+        letter-spacing: 0.3em;
+        color: #444444;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+      "
+    >
+      PÁGINA NÃO ENCONTRADA
+    </span>
+
+    <!-- Message -->
+    <p
+      style="
+        font-family: var(--font-body);
+        font-size: clamp(1rem, 1.8vw, 1.4rem);
+        font-weight: 300;
+        line-height: 1.5;
+        color: color-mix(in srgb, #F0EDE6 70%, transparent);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        max-width: 38ch;
+        margin: 0 0 3rem 0;
+      "
+    >
+      Esta página não existe ou foi removida.<br />
+      O underground é assim — algumas coisas simplesmente somem.
+    </p>
+
+    <!-- CTA -->
+    <a href="/" class="cta-back">
+      <span aria-hidden="true">←</span>
+      VOLTAR AO INÍCIO
+    </a>
+  </section>
+</BaseLayout>
+
+<style>
+  .cta-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #C8FF00;
+    border: 1px solid #C8FF00;
+    padding: 0.7rem 1.4rem;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .cta-back:hover {
+    background: #C8FF00;
+    color: #000;
+  }
+</style>

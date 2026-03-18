@@ -15,30 +15,36 @@ const props = defineProps<{
 }>();
 
 const selectedYear = ref<number | null>(null);
-const now = new Date();
+const nowMs = Date.now();
+
+// Parse each date string once — reused by all downstream computeds.
+const parsedEvents = computed(() =>
+  props.events.map((e) => {
+    const d = new Date(e.date);
+    return { ...e, _ms: d.valueOf(), _year: d.getFullYear() };
+  })
+);
 
 const years = computed(() => {
-  const ys = props.events.map((e) => new Date(e.date).getFullYear());
+  const ys = parsedEvents.value.map((e) => e._year);
   return [...new Set(ys)].sort((a, b) => b - a);
 });
 
 const filtered = computed(() => {
-  if (selectedYear.value === null) return props.events;
-  return props.events.filter(
-    (e) => new Date(e.date).getFullYear() === selectedYear.value
-  );
+  if (selectedYear.value === null) return parsedEvents.value;
+  return parsedEvents.value.filter((e) => e._year === selectedYear.value);
 });
 
 const upcoming = computed(() =>
   filtered.value
-    .filter((e) => new Date(e.date) > now)
-    .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf())
+    .filter((e) => e._ms > nowMs)
+    .sort((a, b) => a._ms - b._ms)
 );
 
 const past = computed(() =>
   filtered.value
-    .filter((e) => new Date(e.date) <= now)
-    .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf())
+    .filter((e) => e._ms <= nowMs)
+    .sort((a, b) => b._ms - a._ms)
 );
 
 function formatDay(dateStr: string) {
@@ -59,7 +65,7 @@ function formatYear(dateStr: string) {
     <div class="filter-bar" role="group" aria-label="Filtrar por ano">
       <button
         :class="['filter-btn', selectedYear === null ? 'active' : '']"
-        @click="selectedYear = null"
+        @click="() => { selectedYear = null; }"
       >
         TODOS
       </button>
@@ -67,7 +73,7 @@ function formatYear(dateStr: string) {
         v-for="year in years"
         :key="year"
         :class="['filter-btn', selectedYear === year ? 'active' : '']"
-        @click="selectedYear = year"
+        @click="() => { selectedYear = year; }"
       >
         {{ year }}
       </button>

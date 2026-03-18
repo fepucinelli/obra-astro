@@ -2,6 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
+export const prerender = true;
+
 // Get content
 const allBlogPosts = await getCollection("blog", ({ data }) => !data.draft);
 const allEvents = await getCollection("events", ({ data }) => !data.draft);
@@ -87,7 +89,8 @@ const categoryLabels: Record<string, string> = {
                 src={latestPost.data.cover}
                 alt={latestPost.data.title}
                 class="card-img"
-                loading="lazy"
+                fetchpriority="high"
+                loading="eager"
                 decoding="async"
               />
             ) : (
@@ -236,6 +239,7 @@ const categoryLabels: Record<string, string> = {
   margin-top: -4rem; /* overlap header */
   background-color: #080808;
   isolation: isolate;
+  contain: layout;
 }
 
 /* ── Geometric animation canvas ── */
@@ -248,7 +252,6 @@ const categoryLabels: Record<string, string> = {
 /* Base geo styles */
 .geo {
   position: absolute;
-  will-change: transform, opacity;
 }
 
 /* Rect 1 — large acid outline rect, rotates slowly */
@@ -261,6 +264,7 @@ const categoryLabels: Record<string, string> = {
   opacity: 0.55;
   animation: geoRotate1 28s linear infinite;
   transform-origin: center;
+  will-change: transform;
 }
 
 /* Rect 2 — smaller, offset, counter-rotates */
@@ -273,6 +277,7 @@ const categoryLabels: Record<string, string> = {
   opacity: 0.25;
   animation: geoRotate2 20s linear infinite reverse;
   transform-origin: center;
+  will-change: transform;
 }
 
 /* Line 1 — horizontal scan */
@@ -501,6 +506,8 @@ const categoryLabels: Record<string, string> = {
 .highlights {
   padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 6vw, 6rem);
   border-top: 1px solid color-mix(in srgb, var(--color-muted) 25%, transparent);
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
 }
 
 .highlights-grid {
@@ -832,6 +839,8 @@ const categoryLabels: Record<string, string> = {
   padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 6vw, 6rem);
   border-top: 1px solid color-mix(in srgb, var(--color-muted) 25%, transparent);
   position: relative;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
 }
 
 /* Accent rule */
@@ -895,6 +904,22 @@ const categoryLabels: Record<string, string> = {
   transform: scaleX(1);
 }
 
+/* ─── Reduced Motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .geo {
+    animation: none;
+    will-change: auto;
+  }
+
+  .ticker-track {
+    animation: none;
+  }
+
+  .embed-bar {
+    animation: none;
+  }
+}
+
 /* ─── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 899px) {
   .hero-content {
@@ -928,17 +953,22 @@ const categoryLabels: Record<string, string> = {
 <script>
   // IntersectionObserver scroll reveals
   const revealEls = document.querySelectorAll<HTMLElement>(".reveal");
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
-  );
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  revealEls.forEach((el) => revealObserver.observe(el));
+  if (prefersReducedMotion) {
+    revealEls.forEach((el) => el.classList.add("visible"));
+  } else {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+    );
+    revealEls.forEach((el) => revealObserver.observe(el));
+  }
 </script>

@@ -86,6 +86,8 @@
           <img
             :src="post.cover"
             :alt="post.title"
+            loading="lazy"
+            decoding="async"
             style="
               width: 100%;
               height: 100%;
