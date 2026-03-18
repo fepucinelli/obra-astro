@@ -340,7 +340,7 @@ The admin panel and auth routes (`/auth/callback`, `/auth/logout`) are inherentl
 
 ### Why AES-256-GCM instead of a session library?
 
-`iron-session` is listed as a dependency but is not being used. AES-256-GCM with Node.js's built-in `crypto` module was implemented directly for:
+AES-256-GCM with Node.js's built-in `crypto` module was implemented directly rather than using a library like `iron-session` for:
 
 1. Zero additional runtime dependencies
 2. Full control over the format (IV + auth tag + ciphertext in hex)
