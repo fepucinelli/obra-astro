@@ -8,7 +8,7 @@ Website for the OBRA electronic music collective. Built with Astro 4, Vue 3, and
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | [Astro 4](https://astro.build) — SSR via Vercel serverless |
+| Framework | [Astro 4](https://astro.build) — hybrid output (static default, server for admin/auth/API) |
 | Interactive UI | [Vue 3](https://vuejs.org) — only where interactivity is needed |
 | Styles | [Tailwind CSS 3](https://tailwindcss.com) + custom CSS |
 | CMS | GitHub API (`.md` files in the repository) |
@@ -37,8 +37,10 @@ This model has important implications:
 
 ### Static vs. Dynamic Routes
 
+`output: "hybrid"` makes static the default — every route is pre-rendered at build time unless it explicitly opts into server mode with `export const prerender = false`.
+
 ```
-Static (prerender = true, generated at build time)
+Static (default — generated at build time, served as HTML from CDN)
 ├── /
 ├── /about
 ├── /press
@@ -50,7 +52,7 @@ Static (prerender = true, generated at build time)
 ├── /podcasts
 └── /podcasts/[slug]
 
-Dynamic (SSR, serverless function on Vercel)
+Dynamic (prerender = false — serverless function on Vercel)
 ├── /auth/login       — redirects to GitHub OAuth
 ├── /auth/callback    — exchanges code for token, creates session
 ├── /auth/logout      — clears session cookie
@@ -334,9 +336,11 @@ The OBRA team already uses GitHub for development. An external CMS would add: a 
 
 The tradeoff is that the admin is more technical than a CMS like Contentful or Sanity. At the project's current scale this is acceptable.
 
-### Why SSR (server output) instead of pure SSG?
+### Why hybrid static output instead of full SSR?
 
-The admin panel and auth routes (`/auth/callback`, `/auth/logout`) are inherently dynamic — they need responses based on session state. Astro allows mixing both: public routes marked with `export const prerender = true` are generated as static HTML; dynamic routes run as serverless functions.
+The site uses `output: "hybrid"` rather than `output: "server"`. Public pages — blog posts, events, podcasts — never change at runtime and are pre-rendered at build time as plain HTML files served from the Vercel CDN edge. Only the admin panel and auth routes (`/auth/login`, `/auth/callback`, `/auth/logout`, `/admin/**`, `/api/content/[type]`) genuinely require runtime execution; they opt into server mode with `export const prerender = false` and run as serverless functions.
+
+The result: smaller function bundle, faster cold starts, lower Vercel cost, and public pages served with zero serverless overhead.
 
 ### Why AES-256-GCM instead of a session library?
 

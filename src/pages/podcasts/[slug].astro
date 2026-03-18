@@ -3,8 +3,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import EmbedPlayer from "../../components/EmbedPlayer.vue";
 
-export const prerender = true;
-
 export async function getStaticPaths() {
   const podcasts = await getCollection("podcasts", ({ data }) => !data.draft);
   return podcasts.map((podcast) => ({

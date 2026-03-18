@@ -1,3 +1,4 @@
+export const prerender = false;
 import type { APIRoute } from "astro";
 import { getSession } from "../../../lib/auth";
 import {

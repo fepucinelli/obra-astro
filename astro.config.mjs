@@ -6,7 +6,7 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://obra.xyz",
-  output: "server",
+  output: "hybrid",
   adapter: vercel(),
   integrations: [
     vue(),

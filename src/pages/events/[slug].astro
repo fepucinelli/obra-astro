@@ -2,8 +2,6 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
-export const prerender = true;
-
 export async function getStaticPaths() {
   const events = await getCollection("events", ({ data }) => !data.draft);
   return events.map((event) => ({

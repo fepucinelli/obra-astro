@@ -1,3 +1,4 @@
+export const prerender = false;
 import type { APIRoute } from "astro";
 import { exchangeCodeForToken, getGitHubUser, setSession } from "../../lib/auth";
 
