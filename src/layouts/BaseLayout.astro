@@ -143,7 +143,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://obra.xyz
       </div>
       <div class="mt-8 pt-8 border-t border-obra-muted/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <p class="font-mono text-xs text-obra-muted tracking-wider">© 2024 OBRA. Todos os direitos reservados.</p>
-        <a href="/admin" class="font-mono text-xs text-obra-muted/40 hover:text-obra-muted transition-colors tracking-widest">ADMIN</a>
+        <a href={`${import.meta.env.PAYLOAD_URL ?? 'http://localhost:3001'}/admin`} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-obra-muted/40 hover:text-obra-muted transition-colors tracking-widest">ADMIN</a>
       </div>
     </footer>
 

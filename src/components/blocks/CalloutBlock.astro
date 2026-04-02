@@ -1,0 +1,47 @@
+---
+import RichTextBlock from './RichTextBlock.astro'
+
+interface Props {
+  variant: 'tip' | 'warning' | 'quote'
+  content: Record<string, unknown>
+}
+
+const { variant, content } = Astro.props
+
+const styles: Record<string, { border: string; label: string; labelColor: string }> = {
+  tip: {
+    border: '#C8FF00',
+    label: 'DICA',
+    labelColor: '#C8FF00',
+  },
+  warning: {
+    border: '#FF6B00',
+    label: 'ATENÇÃO',
+    labelColor: '#FF6B00',
+  },
+  quote: {
+    border: '#888888',
+    label: 'CITAÇÃO',
+    labelColor: '#888888',
+  },
+}
+
+const style = styles[variant] ?? styles.tip
+---
+
+<aside
+  style={`
+    border-left: 3px solid ${style.border};
+    padding: 1.25rem 1.5rem;
+    margin: 2em 0;
+    background-color: color-mix(in srgb, ${style.border} 4%, transparent);
+  `}
+>
+  <p
+    class="font-mono"
+    style={`font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: ${style.labelColor}; margin: 0 0 0.75rem 0;`}
+  >
+    {style.label}
+  </p>
+  <RichTextBlock content={content} />
+</aside>

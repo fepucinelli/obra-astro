@@ -1,16 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getAllPosts, getAllEvents, getAllPodcasts } from "../lib/payload";
 
-// Get content
-const allBlogPosts = await getCollection("blog", ({ data }) => !data.draft);
-const allEvents = await getCollection("events", ({ data }) => !data.draft);
-const allPodcasts = await getCollection("podcasts", ({ data }) => !data.draft);
-
-// Sort and get latest
-const latestPost = allBlogPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
-const latestEvent = allEvents.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
-const latestPodcast = allPodcasts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
+// Get content (already sorted by -date from Payload)
+const [latestPost] = await getAllPosts();
+const [latestEvent] = await getAllEvents();
+const [latestPodcast] = await getAllPodcasts();
 
 // Format date helper
 function formatDate(date: Date) {
@@ -82,10 +77,10 @@ const categoryLabels: Record<string, string> = {
       {latestPost && (
         <article class="card card-post reveal">
           <div class="card-img-wrap">
-            {latestPost.data.cover ? (
+            {latestPost.cover ? (
               <img
-                src={latestPost.data.cover}
-                alt={latestPost.data.title}
+                src={latestPost.cover}
+                alt={latestPost.title}
                 class="card-img"
                 fetchpriority="high"
                 loading="eager"
@@ -102,18 +97,18 @@ const categoryLabels: Record<string, string> = {
           <div class="card-body">
             <span class="section-label">— ÚLTIMA POSTAGEM</span>
             <div class="card-meta-row">
-              {latestPost.data.category && (
+              {latestPost.category && (
                 <span class="category-pill">
-                  {categoryLabels[latestPost.data.category] ?? latestPost.data.category}
+                  {categoryLabels[latestPost.category] ?? latestPost.category}
                 </span>
               )}
-              <time class="card-date" datetime={latestPost.data.date.toISOString()}>
-                {formatDate(latestPost.data.date)}
+              <time class="card-date" datetime={latestPost.date.toISOString()}>
+                {formatDate(latestPost.date)}
               </time>
             </div>
-            <h2 class="card-title">{latestPost.data.title}</h2>
-            {latestPost.data.description && (
-              <p class="card-desc">{latestPost.data.description}</p>
+            <h2 class="card-title">{latestPost.title}</h2>
+            {latestPost.description && (
+              <p class="card-desc">{latestPost.description}</p>
             )}
             <a href={`/blog/${latestPost.slug}`} class="card-link link-underline">
               LER MAIS
@@ -134,29 +129,29 @@ const categoryLabels: Record<string, string> = {
             <span class="section-label">— PRÓXIMO EVENTO</span>
             <div class="event-date-block">
               <span class="event-day">
-                {latestEvent.data.date.toLocaleDateString("pt-BR", { day: "2-digit" })}
+                {latestEvent.date.toLocaleDateString("pt-BR", { day: "2-digit" })}
               </span>
               <span class="event-month">
-                {latestEvent.data.date.toLocaleDateString("pt-BR", { month: "short" }).toUpperCase().replace(".", "")}
+                {latestEvent.date.toLocaleDateString("pt-BR", { month: "short" }).toUpperCase().replace(".", "")}
               </span>
             </div>
-            <h2 class="card-title card-title--event">{latestEvent.data.name}</h2>
-            {latestEvent.data.location && (
+            <h2 class="card-title card-title--event">{latestEvent.name}</h2>
+            {latestEvent.location && (
               <p class="event-location">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" style="display:inline;vertical-align:middle;margin-right:4px">
                   <circle cx="6" cy="5" r="2" stroke="currentColor" stroke-width="1.2"/>
                   <path d="M6 1C3.79 1 2 2.79 2 5c0 3 4 7 4 7s4-4 4-7c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.2" fill="none"/>
                 </svg>
-                {latestEvent.data.location}
+                {latestEvent.location}
               </p>
             )}
-            {latestEvent.data.description && (
-              <p class="card-desc card-desc--sm">{latestEvent.data.description}</p>
+            {latestEvent.description && (
+              <p class="card-desc card-desc--sm">{latestEvent.description}</p>
             )}
             <div class="event-links">
               <a href={`/events/${latestEvent.slug}`} class="card-link link-underline">VER EVENTO</a>
-              {latestEvent.data.ticketUrl && (
-                <a href={latestEvent.data.ticketUrl} class="btn-ticket" target="_blank" rel="noopener noreferrer">
+              {latestEvent.ticketUrl && (
+                <a href={latestEvent.ticketUrl} class="btn-ticket" target="_blank" rel="noopener noreferrer">
                   INGRESSOS →
                 </a>
               )}
@@ -179,12 +174,12 @@ const categoryLabels: Record<string, string> = {
                 <path d="M32 24a8 8 0 01-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </div>
-            <h2 class="card-title card-title--podcast">{latestPodcast.data.title}</h2>
-            {latestPodcast.data.duration && (
-              <span class="podcast-duration">{latestPodcast.data.duration}</span>
+            <h2 class="card-title card-title--podcast">{latestPodcast.title}</h2>
+            {latestPodcast.duration && (
+              <span class="podcast-duration">{latestPodcast.duration}</span>
             )}
-            {latestPodcast.data.description && (
-              <p class="card-desc card-desc--sm">{latestPodcast.data.description}</p>
+            {latestPodcast.description && (
+              <p class="card-desc card-desc--sm">{latestPodcast.description}</p>
             )}
             <div class="podcast-embed-hint" aria-hidden="true">
               <span class="embed-bar"></span>

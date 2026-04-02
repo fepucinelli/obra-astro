@@ -1,0 +1,21 @@
+---
+import type { PayloadBlock } from '../lib/payload'
+import RichTextBlock from './blocks/RichTextBlock.astro'
+import ImageBlock from './blocks/ImageBlock.astro'
+import CalloutBlock from './blocks/CalloutBlock.astro'
+import EmbedBlock from './blocks/EmbedBlock.astro'
+
+interface Props {
+  blocks: PayloadBlock[]
+}
+
+const { blocks = [] } = Astro.props
+---
+
+{blocks.map((block) => {
+  if (block.blockType === 'richText') return <RichTextBlock content={block.content} />
+  if (block.blockType === 'image') return <ImageBlock image={block.image} caption={block.caption} alt={block.alt} />
+  if (block.blockType === 'callout') return <CalloutBlock variant={block.variant} content={block.content} />
+  if (block.blockType === 'embed') return <EmbedBlock url={block.url} caption={block.caption} />
+  return null
+})}

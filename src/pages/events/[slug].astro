@@ -1,9 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import BlockRenderer from "../../components/BlockRenderer.astro";
+import { getAllEvents } from "../../lib/payload";
 
 export async function getStaticPaths() {
-  const events = await getCollection("events", ({ data }) => !data.draft);
+  const events = await getAllEvents();
   return events.map((event) => ({
     params: { slug: event.slug },
     props: { event },
@@ -11,10 +12,9 @@ export async function getStaticPaths() {
 }
 
 const { event } = Astro.props;
-const { Content } = await event.render();
-const isPast = event.data.date < new Date();
+const isPast = event.date < new Date();
 
-const date = event.data.date;
+const date = event.date;
 const day = String(date.getDate()).padStart(2, "0");
 const month = String(date.getMonth() + 1).padStart(2, "0");
 const year = date.getFullYear();
@@ -22,32 +22,32 @@ const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
 ---
 
 <BaseLayout
-  title={event.data.name}
-  description={event.data.description}
-  ogImage={event.data.image}
+  title={event.name}
+  description={event.description}
+  ogImage={event.image}
   ogType="event"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Event",
-      "name": event.data.name,
-      "description": event.data.description ?? "",
-      "startDate": event.data.date.toISOString(),
-      "image": event.data.image ?? "",
+      "name": event.name,
+      "description": event.description ?? "",
+      "startDate": event.date.toISOString(),
+      "image": event.image ?? "",
       "url": `https://obra.xyz/events/${event.slug}`,
-      "location": event.data.location ? {
+      "location": event.location ? {
         "@type": "Place",
-        "name": event.data.location
+        "name": event.location
       } : undefined,
       "organizer": {
         "@type": "Organization",
         "name": "OBRA",
         "url": "https://obra.xyz"
       },
-      "offers": event.data.ticketUrl ? {
+      "offers": event.ticketUrl ? {
         "@type": "Offer",
-        "url": event.data.ticketUrl,
+        "url": event.ticketUrl,
         "availability": "https://schema.org/InStock"
       } : undefined
     })} />
@@ -97,30 +97,30 @@ const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
         class="font-display font-bold text-obra-white leading-tight mb-6"
         style="font-size: clamp(2rem, 6vw, 5rem);"
       >
-        {event.data.name}
+        {event.name}
       </h1>
 
       <!-- Meta row -->
       <div class="flex flex-wrap gap-6 items-center mb-10">
-        {event.data.location && (
+        {event.location && (
           <div class="flex items-center gap-2">
             <span class="text-obra-accent font-mono text-sm">→</span>
             <span class="font-mono text-sm tracking-wide text-obra-white">
-              {event.data.location}
+              {event.location}
             </span>
           </div>
         )}
-        {event.data.description && (
+        {event.description && (
           <p class="font-body text-obra-muted text-base w-full max-w-2xl leading-relaxed mt-2">
-            {event.data.description}
+            {event.description}
           </p>
         )}
       </div>
 
       <!-- CTA -->
-      {event.data.ticketUrl && !isPast && (
+      {event.ticketUrl && !isPast && (
         <a
-          href={event.data.ticketUrl}
+          href={event.ticketUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center gap-3 font-mono text-sm tracking-widest uppercase px-6 py-3 bg-obra-accent text-obra-black font-bold hover:bg-obra-white transition-colors"
@@ -128,9 +128,9 @@ const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
           INGRESSOS →
         </a>
       )}
-      {event.data.ticketUrl && isPast && (
+      {event.ticketUrl && isPast && (
         <a
-          href={event.data.ticketUrl}
+          href={event.ticketUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center gap-3 font-mono text-xs tracking-widest uppercase px-4 py-2.5 border border-obra-muted/50 text-obra-muted hover:border-obra-muted hover:text-obra-white transition-colors"
@@ -142,13 +142,13 @@ const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
   </section>
 
   <!-- Event image -->
-  {event.data.image && (
+  {event.image && (
     <section class="px-6 md:px-12 py-10">
       <div class="max-w-5xl">
         <div class="relative overflow-hidden" style="aspect-ratio: 16/7;">
           <img
-            src={event.data.image}
-            alt={event.data.name}
+            src={event.image}
+            alt={event.name}
             loading="lazy"
             decoding="async"
             class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
@@ -161,14 +161,14 @@ const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
     </section>
   )}
 
-  <!-- Content -->
-  <section class="px-6 md:px-12 py-12">
-    <div class="max-w-2xl">
-      <div class="prose prose-invert">
-        <Content />
+  <!-- Block content -->
+  {event.details.length > 0 && (
+    <section class="px-6 md:px-12 py-12">
+      <div class="max-w-2xl">
+        <BlockRenderer blocks={event.details} />
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <!-- Bottom nav -->
   <div class="px-6 md:px-12 py-10 border-t border-obra-muted/30">

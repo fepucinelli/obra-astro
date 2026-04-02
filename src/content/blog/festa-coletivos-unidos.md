@@ -2,7 +2,7 @@
 title: "Noite dos Coletivos: Convergência"
 description: "Quando quatro coletivos de SP se juntam para uma noite de música e resistência cultural."
 date: 2024-05-10
-cover: "/images/blog/coletivos.jpg"
+cover: "/images/placeholder.jpg"
 category: evento-coletivo
 tags: ["coletivos", "parceria", "são paulo", "resistência"]
 draft: false

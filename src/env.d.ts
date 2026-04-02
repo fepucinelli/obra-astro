@@ -1,1 +1,10 @@
 /// <reference path="../.astro/types.d.ts" />
+/// <reference path="./vue-shims.d.ts" />
+
+interface ImportMetaEnv {
+  readonly PAYLOAD_URL: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

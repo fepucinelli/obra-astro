@@ -2,7 +2,7 @@
 name: "Techno Uprising"
 description: "Uma noite de techno industrial e experimental nos porões do centro de SP. Line-up fechado com residentes e convidados internacionais."
 date: 2024-08-23
-image: "/images/events/techno-uprising.jpg"
+image: "/images/placeholder.jpg"
 location: "Centro, São Paulo"
 ticketUrl: "https://ticket.example.com/techno-uprising"
 draft: false

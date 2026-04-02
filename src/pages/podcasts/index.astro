@@ -1,12 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
 import EmbedPlayer from "../../components/EmbedPlayer.vue";
+import { getAllPodcasts } from "../../lib/payload";
 
-const allPodcasts = await getCollection("podcasts", ({ data }) => !data.draft);
-const podcasts = allPodcasts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-const [featured, ...rest] = podcasts;
+const podcasts = await getAllPodcasts();
+const [featured] = podcasts;
 
 function formatDate(d: Date) {
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
@@ -68,8 +66,8 @@ function episodeNumber(index: number) {
           <div class="order-2 md:order-1">
             <div class="border border-obra-muted/30 overflow-hidden">
               <EmbedPlayer
-                url={featured.data.embedUrl}
-                title={featured.data.title}
+                url={featured.embedUrl}
+                title={featured.title}
                 client:visible
               />
             </div>
@@ -82,9 +80,9 @@ function episodeNumber(index: number) {
                 EP. {episodeNumber(0)}
               </span>
               <span class="w-8 h-px bg-obra-muted/50"></span>
-              {featured.data.duration && (
+              {featured.duration && (
                 <span class="font-mono text-obra-muted text-xs tracking-widest">
-                  {featured.data.duration}
+                  {featured.duration}
                 </span>
               )}
             </div>
@@ -93,22 +91,22 @@ function episodeNumber(index: number) {
               class="font-display font-bold text-obra-white leading-tight mb-4"
               style="font-size: clamp(1.5rem, 3.5vw, 2.75rem);"
             >
-              {featured.data.title}
+              {featured.title}
             </h2>
 
             <p class="font-mono text-xs text-obra-muted tracking-widest uppercase mb-6">
-              {formatDate(featured.data.date)}
+              {formatDate(featured.date)}
             </p>
 
-            {featured.data.description && (
+            {featured.description && (
               <p class="font-body text-obra-muted text-base leading-relaxed mb-6">
-                {featured.data.description}
+                {featured.description}
               </p>
             )}
 
-            {featured.data.tags.length > 0 && (
+            {featured.tags.length > 0 && (
               <div class="flex flex-wrap gap-2 mb-8">
-                {featured.data.tags.map((tag) => (
+                {featured.tags.map((tag) => (
                   <span class="font-mono text-xs tracking-widest uppercase px-2 py-1 border border-obra-muted/40 text-obra-muted">
                     {tag}
                   </span>
@@ -152,22 +150,22 @@ function episodeNumber(index: number) {
                 class="font-display font-bold text-obra-white group-hover:text-obra-accent transition-colors leading-snug mb-1"
                 style="font-size: clamp(1rem, 2vw, 1.35rem);"
               >
-                {podcast.data.title}
+                {podcast.title}
               </h3>
               <p class="font-mono text-xs text-obra-muted tracking-widest uppercase mb-2">
-                {formatDate(podcast.data.date)}
-                {podcast.data.duration && (
-                  <span class="ml-3 opacity-70">{podcast.data.duration}</span>
+                {formatDate(podcast.date)}
+                {podcast.duration && (
+                  <span class="ml-3 opacity-70">{podcast.duration}</span>
                 )}
               </p>
-              {podcast.data.description && (
+              {podcast.description && (
                 <p class="font-body text-obra-muted text-sm leading-relaxed line-clamp-2 max-w-xl">
-                  {podcast.data.description}
+                  {podcast.description}
                 </p>
               )}
-              {podcast.data.tags.length > 0 && (
+              {podcast.tags.length > 0 && (
                 <div class="flex flex-wrap gap-1.5 mt-3">
-                  {podcast.data.tags.map((tag) => (
+                  {podcast.tags.map((tag) => (
                     <span class="font-mono text-xs tracking-widest uppercase px-2 py-0.5 border border-obra-muted/30 text-obra-muted/60">
                       {tag}
                     </span>

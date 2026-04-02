@@ -1,26 +1,21 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
 import DateFilter from "../../components/DateFilter.vue";
+import { getAllEvents } from "../../lib/payload";
 
-const allEvents = await getCollection("events", ({ data }) => !data.draft);
+const allEvents = await getAllEvents();
 const now = new Date();
 
-const upcoming = allEvents
-  .filter((e) => e.data.date > now)
-  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
-
-const past = allEvents
-  .filter((e) => e.data.date <= now)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const upcoming = allEvents.filter((e) => e.date > now);
+const past = allEvents.filter((e) => e.date <= now);
 
 const events = [...upcoming, ...past].map((e) => ({
   slug: e.slug,
-  name: e.data.name,
-  date: e.data.date.toISOString(),
-  image: e.data.image,
-  location: e.data.location,
-  description: e.data.description,
+  name: e.name,
+  date: e.date.toISOString(),
+  image: e.image,
+  location: e.location,
+  description: e.description,
 }));
 ---
 

@@ -1,0 +1,29 @@
+---
+interface Props {
+  image: { url: string; alt?: string; sizes?: Record<string, { url?: string }> }
+  caption?: string
+  alt?: string
+}
+
+const { image, caption, alt } = Astro.props
+const src = image.url
+const altText = alt ?? image.alt ?? caption ?? ''
+---
+
+<figure style="margin: 2em 0;">
+  <img
+    src={src}
+    alt={altText}
+    loading="lazy"
+    decoding="async"
+    style="width: 100%; height: auto; display: block;"
+  />
+  {caption && (
+    <figcaption
+      class="font-mono"
+      style="font-size: 0.65rem; letter-spacing: 0.1em; color: #444444; margin-top: 0.5rem; text-align: center;"
+    >
+      {caption}
+    </figcaption>
+  )}
+</figure>

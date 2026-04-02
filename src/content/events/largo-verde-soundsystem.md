@@ -2,7 +2,7 @@
 name: "Largo Verde Soundsystem"
 description: "Ocupação cultural gratuita no Largo Verde. Soundsystem ao ar livre, arte visual e comida de rua."
 date: 2024-09-14
-image: "/images/events/largo-verde.jpg"
+image: "/images/placeholder.jpg"
 location: "Largo Verde, São Paulo"
 draft: false
 ---

@@ -1,9 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection, getEntry } from "astro:content";
+import BlockRenderer from "../../components/BlockRenderer.astro";
+import { getAllPosts } from "../../lib/payload";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const posts = await getAllPosts();
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -11,15 +12,12 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await post.render();
 
 // Sibling posts for "next post" navigation
-const allPosts = await getCollection("blog", ({ data }) => !data.draft);
-const sorted = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const currentIndex = sorted.findIndex((p) => p.slug === post.slug);
-const nextPost = sorted[currentIndex + 1] ?? null;
+const allPosts = await getAllPosts();
+const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
+const nextPost = allPosts[currentIndex + 1] ?? null;
 
-// Helpers
 function formatDate(date: Date) {
   return date.toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -34,23 +32,23 @@ const categoryLabels: Record<string, string> = {
   "evento-coletivo": "EVENTO COLETIVO",
 };
 
-const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
+const categoryLabel = categoryLabels[post.category] ?? post.category;
 ---
 
 <BaseLayout
-  title={post.data.title}
-  description={post.data.description}
-  ogImage={post.data.cover}
+  title={post.title}
+  description={post.description}
+  ogImage={post.cover}
   ogType="article"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": post.data.title,
-      "description": post.data.description ?? "",
-      "image": post.data.cover ?? "",
-      "datePublished": post.data.date.toISOString(),
+      "headline": post.title,
+      "description": post.description ?? "",
+      "image": post.cover ?? "",
+      "datePublished": post.date.toISOString(),
       "url": `https://obra.xyz/blog/${post.slug}`,
       "publisher": {
         "@type": "Organization",
@@ -104,7 +102,7 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
         </span>
 
         <time
-          datetime={post.data.date.toISOString()}
+          datetime={post.date.toISOString()}
           class="font-mono"
           style="
             font-size: 0.65rem;
@@ -113,7 +111,7 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
             color: #444444;
           "
         >
-          {formatDate(post.data.date)}
+          {formatDate(post.date)}
         </time>
       </div>
 
@@ -130,10 +128,10 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
           max-width: 18ch;
         "
       >
-        {post.data.title}
+        {post.title}
       </h1>
 
-      {post.data.description && (
+      {post.description && (
         <p
           class="font-body reveal"
           style="
@@ -144,13 +142,13 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
             margin: 0;
           "
         >
-          {post.data.description}
+          {post.description}
         </p>
       )}
     </header>
 
     <!-- Cover image -->
-    {post.data.cover && (
+    {post.cover && (
       <div
         class="px-6 md:px-12 reveal"
         style="max-width: 1200px; margin: 0 auto 4rem;"
@@ -164,8 +162,8 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
           "
         >
           <img
-            src={post.data.cover}
-            alt={post.data.title}
+            src={post.cover}
+            alt={post.title}
             fetchpriority="high"
             loading="eager"
             decoding="async"
@@ -177,7 +175,6 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
               filter: grayscale(15%);
             "
           />
-          <!-- Subtle dark overlay on edges -->
           <div
             style="
               position: absolute;
@@ -212,21 +209,18 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
       ></div>
     </div>
 
-    <!-- Prose content -->
+    <!-- Block content -->
     <div
       class="px-6 md:px-12 reveal"
       style="max-width: 1200px; margin: 0 auto 5rem;"
     >
-      <div
-        class="post-content"
-        style="max-width: 72ch;"
-      >
-        <Content />
+      <div style="max-width: 72ch;">
+        <BlockRenderer blocks={post.layout} />
       </div>
     </div>
 
     <!-- Tags -->
-    {post.data.tags && post.data.tags.length > 0 && (
+    {post.tags && post.tags.length > 0 && (
       <div
         class="px-6 md:px-12"
         style="max-width: 1200px; margin: 0 auto 5rem;"
@@ -245,7 +239,7 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
           >
             TAGS:
           </span>
-          {post.data.tags.map((tag: string) => (
+          {post.tags.map((tag: string) => (
             <span
               class="font-mono"
               style="
@@ -298,7 +292,7 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
               text-decoration: none;
             "
           >
-            {nextPost.data.cover && (
+            {nextPost.cover && (
               <div
                 style="
                   width: 120px;
@@ -309,8 +303,8 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
                 "
               >
                 <img
-                  src={nextPost.data.cover}
-                  alt={nextPost.data.title}
+                  src={nextPost.cover}
+                  alt={nextPost.title}
                   loading="lazy"
                   decoding="async"
                   style="
@@ -326,7 +320,7 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
 
             <div>
               <time
-                datetime={nextPost.data.date.toISOString()}
+                datetime={nextPost.date.toISOString()}
                 class="font-mono"
                 style="
                   font-size: 0.6rem;
@@ -337,7 +331,7 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
                   margin-bottom: 0.5rem;
                 "
               >
-                {formatDate(nextPost.data.date)}
+                {formatDate(nextPost.date)}
               </time>
 
               <h2
@@ -353,7 +347,7 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
                   max-width: 30ch;
                 "
               >
-                {nextPost.data.title}
+                {nextPost.title}
               </h2>
 
               <span
@@ -497,31 +491,6 @@ const categoryLabel = categoryLabels[post.data.category] ?? post.data.category;
     height: auto;
     display: block;
     margin: 2em 0;
-  }
-
-  .post-content table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: "Barlow Condensed", system-ui, sans-serif;
-    font-size: 1rem;
-    margin-bottom: 1.5em;
-  }
-
-  .post-content th {
-    font-family: "Space Mono", monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #C8FF00;
-    border-bottom: 1px solid color-mix(in srgb, #444444 60%, transparent);
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-  }
-
-  .post-content td {
-    color: #c8c5bf;
-    border-bottom: 1px solid color-mix(in srgb, #444444 30%, transparent);
-    padding: 0.5rem 0.75rem;
   }
 
   /* ── Back link ─────────────────────────────────────────────── */

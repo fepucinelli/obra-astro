@@ -1,20 +1,18 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
 import CategoryFilter from "../../components/CategoryFilter.vue";
+import { getAllPosts } from "../../lib/payload";
 
-const allPosts = await getCollection("blog", ({ data }) => !data.draft);
-const posts = allPosts
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .map((post) => ({
-    slug: post.slug,
-    title: post.data.title,
-    date: post.data.date.toISOString(),
-    category: post.data.category,
-    cover: post.data.cover,
-    description: post.data.description,
-    tags: post.data.tags,
-  }));
+const allPosts = await getAllPosts();
+const posts = allPosts.map((post) => ({
+  slug: post.slug,
+  title: post.title,
+  date: post.date.toISOString(),
+  category: post.category,
+  cover: post.cover,
+  description: post.description,
+  tags: post.tags,
+}));
 ---
 
 <BaseLayout

@@ -2,7 +2,7 @@
 title: "Estreia nas Ruas: Obra no Largo"
 description: "Relato da nossa primeira ocupação de espaço público com soundsystem e arte visual."
 date: 2024-03-15
-cover: "/images/blog/estreia-rua.jpg"
+cover: "/images/placeholder.jpg"
 category: evento-rua
 tags: ["soundsystem", "street", "estreia", "são paulo"]
 draft: false

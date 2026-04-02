@@ -2,7 +2,7 @@
 title: "Residência no Estúdio: Processo Criativo"
 description: "Como acontece a criação coletiva dentro do espaço da Obra."
 date: 2024-04-20
-cover: "/images/blog/residencia.jpg"
+cover: "/images/placeholder.jpg"
 category: evento-interno
 tags: ["estúdio", "processo", "criação", "residência"]
 draft: false
