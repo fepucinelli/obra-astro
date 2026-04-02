@@ -196,7 +196,7 @@ function readDir(subdir: string) {
 
 // ── Seed logic ───────────────────────────────────────────────────────────────
 
-async function seedPosts(token: string) {
+async function seedPosts(token: string, placeholderMediaId: string | number) {
   console.log('\nSeeding posts...')
   for (const file of readDir('blog')) {
     const slug = file.replace(/\.md$/, '')
@@ -213,12 +213,13 @@ async function seedPosts(token: string) {
       category: data.category ?? 'evento-interno',
       tags: Array.isArray(data.tags) ? (data.tags as string[]).map((tag) => ({ tag })) : [],
       status: data.draft ? 'draft' : 'published',
+      cover: placeholderMediaId,
       layout: [{ blockType: 'richText', content: lexical }],
     }, token)
   }
 }
 
-async function seedEvents(token: string) {
+async function seedEvents(token: string, placeholderMediaId: string | number) {
   console.log('\nSeeding events...')
   for (const file of readDir('events')) {
     const slug = file.replace(/\.md$/, '')
@@ -239,6 +240,7 @@ async function seedEvents(token: string) {
       location: data.location ?? null,
       ticketUrl: data.ticketUrl ?? null,
       status: data.draft ? 'draft' : 'published',
+      image: placeholderMediaId,
       details,
     }
 
@@ -246,7 +248,7 @@ async function seedEvents(token: string) {
   }
 }
 
-async function seedPodcasts(token: string) {
+async function seedPodcasts(token: string, placeholderMediaId: string | number) {
   console.log('\nSeeding podcasts...')
   for (const file of readDir('podcasts')) {
     const slug = file.replace(/\.md$/, '')
@@ -288,9 +290,19 @@ async function main() {
   const token = await login(email, password)
   console.log('Authenticated.')
 
-  await seedPosts(token)
-  await seedEvents(token)
-  await seedPodcasts(token)
+  // Resolve placeholder media ID
+  const mediaRes = await fetch(
+    `${PAYLOAD_URL}/api/media?where[filename][equals]=placeholder.jpg&limit=1`,
+    { headers: { Authorization: `JWT ${token}` } },
+  )
+  const { docs: mediaDocs } = await mediaRes.json() as { docs: Array<{ id: string | number }> }
+  if (!mediaDocs.length) throw new Error('placeholder.jpg not found in Media — upload it first via /admin')
+  const placeholderMediaId = mediaDocs[0].id
+  console.log(`Using placeholder media id: ${placeholderMediaId}`)
+
+  await seedPosts(token, placeholderMediaId)
+  await seedEvents(token, placeholderMediaId)
+  await seedPodcasts(token, placeholderMediaId)
 
   console.log('\nDone.')
 }
