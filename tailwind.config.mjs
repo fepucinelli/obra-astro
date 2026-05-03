@@ -11,8 +11,8 @@ export default {
         "obra-muted": "#444444",
       },
       fontFamily: {
-        mono: ["Space Mono", "DM Mono", "Courier New", "monospace"],
-        display: ["Syne", "system-ui", "sans-serif"],
+        mono: ["New Science", "Courier New", "monospace"],
+        display: ["New Science", "system-ui", "sans-serif"],
         body: ["Barlow Condensed", "system-ui", "sans-serif"],
       },
       letterSpacing: {

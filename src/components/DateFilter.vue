@@ -142,7 +142,7 @@ function formatYear(dateStr: string) {
 }
 
 .filter-btn {
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: "New Science", "Courier New", monospace;
   font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -171,7 +171,7 @@ function formatYear(dateStr: string) {
 }
 
 .section-label {
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: "New Science", "Courier New", monospace;
   font-size: 0.65rem;
   letter-spacing: 0.35em;
   text-transform: uppercase;
@@ -227,7 +227,7 @@ function formatYear(dateStr: string) {
 }
 
 .date-stamp {
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: "New Science", "Courier New", monospace;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 700;
   line-height: 1;
@@ -247,7 +247,7 @@ function formatYear(dateStr: string) {
 }
 
 .event-year {
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: "New Science", "Courier New", monospace;
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   color: #444444;
@@ -255,7 +255,7 @@ function formatYear(dateStr: string) {
 }
 
 .event-name {
-  font-family: "Syne", system-ui, sans-serif;
+  font-family: "New Science", system-ui, sans-serif;
   font-size: clamp(1.1rem, 2.5vw, 1.5rem);
   font-weight: 700;
   color: #F0EDE6;
@@ -273,7 +273,7 @@ function formatYear(dateStr: string) {
 }
 
 .event-location {
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: "New Science", "Courier New", monospace;
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   color: #888888;
@@ -301,7 +301,7 @@ function formatYear(dateStr: string) {
 
 /* Empty state */
 .empty {
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: "New Science", "Courier New", monospace;
   font-size: 0.8rem;
   color: #444444;
   letter-spacing: 0.1em;

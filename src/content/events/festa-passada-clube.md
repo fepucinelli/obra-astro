@@ -2,7 +2,7 @@
 name: "Obra no Clube — Edição de Inverno"
 description: "A edição de inverno no clube parceiro com foco em ambient e techno mais introspectivo."
 date: 2024-06-07
-image: "/images/events/inverno.jpg"
+image: "/images/blog/placeholder.jpg"
 location: "Clube Parceiro, São Paulo"
 draft: false
 ---

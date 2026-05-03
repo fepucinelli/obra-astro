@@ -3,20 +3,51 @@
 @tailwind utilities;
 
 /*
- * ─── Syne fallback font ──────────────────────────────────────
- * Calibrated metrics so the system-font stand-in occupies the
- * same space as Syne 800, minimising CLS when the web font swaps in.
- * Metrics approximated for Syne ExtraBold vs Arial Bold fallback.
+ * ─── New Science — self-hosted web fonts ─────────────────────
+ * Only the three weights actually used in the project are loaded.
+ * WOFF2 (brotli-compressed) keeps each file ≈ 32 KB.
+ * font-display: swap lets text render immediately in the fallback,
+ * then swap in; CLS is minimised by the calibrated fallback below.
  */
 @font-face {
-  font-family: "Syne-fallback";
-  src: local("Arial Bold"), local("Arial"), local("Helvetica Neue Bold"),
-    local("Helvetica Neue"), local("sans-serif");
-  size-adjust: 94%;
-  ascent-override: 90%;
-  descent-override: 22%;
-  line-gap-override: 0%;
-  font-weight: 800;
+  font-family: "New Science";
+  src: url("/fonts/new-science-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "New Science";
+  src: url("/fonts/new-science-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "New Science";
+  src: url("/fonts/new-science-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+ * ─── New Science fallback ────────────────────────────────────
+ * Calibrated metrics so Arial occupies the same line box as
+ * New Science while it loads, minimising CLS.
+ * New Science metrics: x-height 50.6%, cap-height 72.0% of UPM —
+ * nearly identical to Arial, so size-adjust is minimal.
+ */
+@font-face {
+  font-family: "New-Science-fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("sans-serif");
+  size-adjust: 102%;
+  ascent-override: 80%;
+  descent-override: 19%;
+  line-gap-override: 19%;
+  font-weight: 400 700;
   font-style: normal;
 }
 
@@ -28,8 +59,8 @@
   --color-card: #1A1A1A;
   --color-muted: #444444;
 
-  --font-mono: "Space Mono", "DM Mono", "Courier New", monospace;
-  --font-display: "Syne", "Syne-fallback", system-ui, sans-serif;
+  --font-mono: "New Science", "Courier New", monospace;
+  --font-display: "New Science", "New-Science-fallback", system-ui, sans-serif;
   --font-body: "Barlow Condensed", system-ui, sans-serif;
 
   --transition-base: 0.2s ease;

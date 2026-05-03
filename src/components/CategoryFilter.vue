@@ -14,7 +14,7 @@
         :key="cat.value"
         @click="activeCategory = cat.value"
         :style="{
-          fontFamily: 'Space Mono, monospace',
+          fontFamily: 'New Science, monospace',
           fontSize: '0.7rem',
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
@@ -36,7 +36,7 @@
     <!-- Posts count -->
     <p
       style="
-        font-family: 'Space Mono', monospace;
+        font-family: 'New Science', monospace;
         font-size: 0.7rem;
         letter-spacing: 0.2em;
         color: #444444;
@@ -114,7 +114,7 @@
         >
           <span
             style="
-              font-family: 'Space Mono', monospace;
+              font-family: 'New Science', monospace;
               font-size: 2rem;
               font-weight: 700;
               color: #2a2a2a;
@@ -138,7 +138,7 @@
             <!-- Category pill -->
             <span
               :style="{
-                fontFamily: 'Space Mono, monospace',
+                fontFamily: 'New Science, monospace',
                 fontSize: '0.6rem',
                 letterSpacing: '0.2em',
                 textTransform: 'uppercase',
@@ -156,7 +156,7 @@
             <time
               :datetime="post.date"
               style="
-                font-family: 'Space Mono', monospace;
+                font-family: 'New Science', monospace;
                 font-size: 0.65rem;
                 color: #444444;
                 letter-spacing: 0.1em;
@@ -170,7 +170,7 @@
           <!-- Title -->
           <h2
             style="
-              font-family: 'Syne', system-ui, sans-serif;
+              font-family: 'New Science', system-ui, sans-serif;
               font-size: 1.25rem;
               font-weight: 700;
               line-height: 1.2;
@@ -200,7 +200,7 @@
           <!-- Read more -->
           <span
             style="
-              font-family: 'Space Mono', monospace;
+              font-family: 'New Science', monospace;
               font-size: 0.65rem;
               letter-spacing: 0.2em;
               text-transform: uppercase;
@@ -229,7 +229,7 @@
     >
       <p
         style="
-          font-family: 'Space Mono', monospace;
+          font-family: 'New Science', monospace;
           font-size: 0.75rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;

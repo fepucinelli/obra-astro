@@ -128,7 +128,7 @@ const soundcloudEmbedUrl = computed(() => {
 }
 
 .embed-link {
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: "New Science", "Courier New", monospace;
   font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;

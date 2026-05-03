@@ -590,7 +590,7 @@ async function handleDelete() {
 .admin-form {
   background-color: #080808;
   color: #f0ede6;
-  font-family: "Space Mono", monospace;
+  font-family: "New Science", monospace;
   padding: 2rem;
   max-width: 860px;
   width: 100%;
@@ -717,7 +717,7 @@ async function handleDelete() {
   background-color: #111;
   border: 1px solid #2a2a2a;
   color: #f0ede6;
-  font-family: "Space Mono", monospace;
+  font-family: "New Science", monospace;
   font-size: 0.8rem;
   padding: 0.65rem 0.75rem;
   width: 100%;
@@ -822,7 +822,7 @@ async function handleDelete() {
 }
 
 .admin-form__btn {
-  font-family: "Space Mono", monospace;
+  font-family: "New Science", monospace;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.2em;

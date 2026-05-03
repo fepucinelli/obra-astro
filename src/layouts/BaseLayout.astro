@@ -21,7 +21,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://obra.xyz
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#080808" />
     <link rel="canonical" href={canonicalURL} />
 
     <title>{title} — OBRA</title>
@@ -40,34 +44,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://obra.xyz
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- Fonts — non-render-blocking -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!--
-      Fonts preloaded as style; rel is flipped to "stylesheet" by the
-      BaseLayout <script> below — no inline onload needed, keeping
-      script-src 'self' CSP intact.
-      Syne: display=swap (swaps in; CLS minimised by Syne-fallback metrics).
-      Space Mono + Barlow: display=optional (no swap, zero CLS).
-    -->
-    <link
-      rel="preload"
-      as="style"
-      data-font-async
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap"
-    />
-    <link
-      rel="preload"
-      as="style"
-      data-font-async
-      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700&display=optional"
-    />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
-      <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700&display=optional" rel="stylesheet" />
-    </noscript>
+    <!-- Fonts — self-hosted WOFF2, preloaded for LCP/FCP -->
+    <link rel="preload" href="/fonts/new-science-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/new-science-700.woff2" as="font" type="font/woff2" crossorigin />
 
     <style is:global>
       @import "../styles/global.css";
@@ -96,8 +75,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://obra.xyz
     <!-- Navigation -->
     <header class="fixed top-0 left-0 right-0 z-50 border-b border-obra-muted/30">
       <nav class="flex items-center justify-between px-6 md:px-12 py-4 bg-obra-black/90 backdrop-blur-sm">
-        <a href="/" class="font-mono text-xl font-bold tracking-widest text-obra-white hover:text-obra-accent transition-colors">
-          OBRA
+        <a href="/" class="hover:opacity-75 transition-opacity" aria-label="OBRA — início">
+          <img
+            src="/images/obra-logo-white.png"
+            alt="OBRA"
+            width="86"
+            height="36"
+            class="h-8 w-auto"
+            draggable="false"
+          />
         </a>
         <ul class="hidden md:flex items-center gap-8 font-mono text-sm tracking-widest uppercase">
           <li><a href="/blog" class="hover:text-obra-accent transition-colors">Blog</a></li>
@@ -130,7 +116,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://obra.xyz
     <footer class="border-t border-obra-muted/30 mt-24 px-6 md:px-12 py-12">
       <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
         <div>
-          <p class="font-mono text-2xl font-bold tracking-widest text-obra-white mb-2">OBRA</p>
+          <img src="/images/obra-logo-combined-white.png" alt="OBRA" class="h-32 mb-2" />
           <p class="font-body text-obra-muted text-sm">Coletivo de música eletrônica — Brasil</p>
         </div>
         <div class="flex gap-8 font-mono text-xs tracking-widest uppercase text-obra-muted">
@@ -142,18 +128,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://obra.xyz
         </div>
       </div>
       <div class="mt-8 pt-8 border-t border-obra-muted/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <p class="font-mono text-xs text-obra-muted tracking-wider">© 2024 OBRA. Todos os direitos reservados.</p>
+        <p class="font-mono text-xs text-obra-muted tracking-wider">© 2026 OBRA. Todos os direitos reservados.</p>
         <a href="/admin" class="font-mono text-xs text-obra-muted/40 hover:text-obra-muted transition-colors tracking-widest">ADMIN</a>
       </div>
     </footer>
 
     <script>
-      // Activate preloaded font stylesheets without inline onload handlers,
-      // keeping the Content-Security-Policy to script-src 'self'.
-      document.querySelectorAll<HTMLLinkElement>('link[data-font-async]').forEach(link => {
-        link.rel = 'stylesheet';
-      });
-
       // Mobile menu toggle with ARIA
       const btn = document.getElementById('mobile-menu-btn');
       const nav = document.getElementById('mobile-nav');
